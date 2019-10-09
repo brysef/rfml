@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rfml.nn.train.factory &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html"> Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../nbutils.html"> Notebook Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../nn.html"> Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ptradio.html"> PyTorch Radio</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>rfml.nn.train.factory</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for rfml.nn.train.factory</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Simplistic factory pattern for swapping of training strategies.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Bryse Flowers &lt;brysef@vt.edu&gt;&quot;</span>
+
+<span class="c1"># Internal Includes</span>
+<span class="kn">from</span> <span class="nn">.adversarial</span> <span class="k">import</span> <span class="n">AdversarialTrainingStrategy</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">TrainingStrategy</span>
+<span class="kn">from</span> <span class="nn">.standard</span> <span class="k">import</span> <span class="n">StandardTrainingStrategy</span>
+
+
+<div class="viewcode-block" id="build_trainer"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.train.factory.build_trainer">[docs]</a><span class="k">def</span> <span class="nf">build_trainer</span><span class="p">(</span>
+    <span class="n">strategy</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10e-4</span><span class="p">,</span>
+    <span class="n">max_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="n">patience</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span>
+    <span class="n">gpu</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainingStrategy</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Construct a training strategy from the given parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        strategy (str): Strategy to use when training the network, current</span>
+<span class="sd">                        options are:</span>
+<span class="sd">                            - &quot;standard&quot;</span>
+<span class="sd">        lr (float, optional): Learning rate to be used by the optimizer.</span>
+<span class="sd">                              Defaults to 10e-4.</span>
+<span class="sd">        max_epochs (int, optional): Maximum number of epochs to train before</span>
+<span class="sd">                                    stopping training to preserve computing</span>
+<span class="sd">                                    resources (even if the network is still</span>
+<span class="sd">                                    improving). Defaults to 50.</span>
+<span class="sd">        patience (int, optional): Maximum number of epochs to continue to train</span>
+<span class="sd">                                  for even if the network is not still</span>
+<span class="sd">                                  improving before deciding that overfitting is</span>
+<span class="sd">                                  occurring and stopping. Defaults to 5.</span>
+<span class="sd">        batch_size (int, optional): Number of examples to give to the model at</span>
+<span class="sd">                                    one time.  If this value is set too high,</span>
+<span class="sd">                                    then an out of memory error could occur.  If</span>
+<span class="sd">                                    the value is set too low then training will</span>
+<span class="sd">                                    take a longer time (and be more variable).</span>
+<span class="sd">                                    Defaults to 512.</span>
+<span class="sd">        gpu (bool, optional): Flag describing whether the GPU is used or the</span>
+<span class="sd">                              training is performed wholly on the CPU.</span>
+<span class="sd">                              Defaults to True.</span>
+<span class="sd">        **kwargs: The remainder of the keyword arguments are directly passed through to</span>
+<span class="sd">                the constructor of the class being instantied.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; trainer = build_trainer(&quot;standard&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; trainer(model, training, validation, encoder)</span>
+<span class="sd">        &gt;&gt;&gt; model.save(&quot;/path/to/weights.pt&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">strategy</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;STANDARD&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">StandardTrainingStrategy</span><span class="p">(</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">max_epochs</span><span class="o">=</span><span class="n">max_epochs</span><span class="p">,</span>
+            <span class="n">patience</span><span class="o">=</span><span class="n">patience</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">strategy</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ADVERSARIAL&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">AdversarialTrainingStrategy</span><span class="p">(</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+            <span class="n">max_epochs</span><span class="o">=</span><span class="n">max_epochs</span><span class="p">,</span>
+            <span class="n">patience</span><span class="o">=</span><span class="n">patience</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown training strategy (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">strategy</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rfml.nn.model.base &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html"> Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../nbutils.html"> Notebook Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../nn.html"> Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ptradio.html"> PyTorch Radio</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>rfml.nn.model.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for rfml.nn.model.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Base class for all neural network models</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Bryse Flowers &lt;brysef@vt.edu&gt;&quot;</span>
+
+<span class="c1"># External Includes</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="k">import</span> <span class="n">Variable</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="k">import</span> <span class="n">uuid4</span>
+
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.model.base.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class that all neural network models inherit from.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_samples (int): The number of samples that will be given to this</span>
+<span class="sd">                             Model for each inference.</span>
+<span class="sd">        n_classes (int): The number of classes that this Model will predict.</span>
+
+<span class="sd">    This model supports standard switching between training/evaluation through</span>
+<span class="sd">    PyTorch (e.g. Model.train() and Model.eval()) but also supports a custom</span>
+<span class="sd">    command to allow transfer learning by freezing only portions of the network</span>
+<span class="sd">    (e.g. Model.freeze() and Model.unfreeze()).  Note that some subclasses of</span>
+<span class="sd">    this may not necessarily support this feature.</span>
+
+<span class="sd">    This class also provides all of the common functionality to the child</span>
+<span class="sd">    classes such as save() and load().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># pylint: disable=no-member</span>
+    <span class="c1"># The linter doesn&#39;t correctly find the members of the torch library</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_samples</span> <span class="o">=</span> <span class="n">input_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_classes</span> <span class="o">=</span> <span class="n">n_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Delete the temporary weights if they have been used and still exist</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_weights_path&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;----------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;Trainable Parameters: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_trainable_parameters</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;Fixed Parameters: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_trainable_parameters</span>
+        <span class="p">)</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;Total Parameters: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;----------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve the most probable device that this model is currently on.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            This method is not guaranteed to work if the model is split onto multiple</span>
+<span class="sd">            devices (e.g. part on CPU, part on GPU 1, and part on GPU 2).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.device: Device that this model is likely located on</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">probable_device</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">device</span>
+        <span class="k">return</span> <span class="n">probable_device</span>
+
+<div class="viewcode-block" id="Model.freeze"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.model.base.Model.freeze">[docs]</a>    <span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Freeze part of the model so that only parts of the model are updated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Call the child classes implementation</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_freeze&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Model.unfreeze"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.model.base.Model.unfreeze">[docs]</a>    <span class="k">def</span> <span class="nf">unfreeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Re-enable learning of all parts of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Call the child classes implementation</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_unfreeze&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unfreeze</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Model.predict"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.model.base.Model.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a categorical prediction using an argmax strategy.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Inputs to the network.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Label of the highest class for each input.</span>
+
+<span class="sd">        .. seealso:: outputs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># batch x n_classes -- therefore, take the max along the classes dim</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predictions</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Model.outputs"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.model.base.Model.outputs">[docs]</a>    <span class="k">def</span> <span class="nf">outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Convenience method for receiving the full outputs of the neural network.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            This method should only be used during testing -- training should operate</span>
+<span class="sd">            directly on the forward/backward calls provided by PyTorch.</span>
+
+<span class="sd">        This method is opinionated in order to reduce complexity of receiving model</span>
+<span class="sd">        outputs for the caller.  To that end, it does four things for the caller:</span>
+
+<span class="sd">            - Puts the model in *eval* mode so that Batch Normalization/Dropout aren&#39;t</span>
+<span class="sd">              induced</span>
+<span class="sd">            - Pushes the data to whatever device this model is currently on (such as</span>
+<span class="sd">              cuda:0/cuda:1/cpu/etc.) so the caller doesn&#39;t have to know where the model</span>
+<span class="sd">              resides</span>
+<span class="sd">            - Obtains the outputs of the network (using whichever device the model is</span>
+<span class="sd">              currently on)</span>
+<span class="sd">            - Pulls the outputs back to CPU for further analysis by the caller</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Inputs to the network.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Full outputs of this network for each input.</span>
+
+<span class="sd">        .. seealso: predict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">y</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_frozen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_trainable_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The number of parameters that would be &#39;learned&#39; during training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The total number of parameters in the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The expected number of complex samples on the input to this model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_samples</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The number of outputs of this model per inference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_classes</span>
+
+<div class="viewcode-block" id="Model.load"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.model.base.Model.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">map_location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load pretrained weights from disk.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str, optional): If provided, then load immortal weights from</span>
+<span class="sd">                                  this path.  If not set, then the temporary</span>
+<span class="sd">                                  weights path is used (for reloading the</span>
+<span class="sd">                                  &quot;best weights&quot; in an early stopping</span>
+<span class="sd">                                  procedure). Defaults to None.</span>
+<span class="sd">            map_location (str, optional): String representing the device to</span>
+<span class="sd">                                          load the model/weights into. If this</span>
+<span class="sd">                                          is set to None, then the weights will</span>
+<span class="sd">                                          be loaded onto the same device they</span>
+<span class="sd">                                          were saved from. This can cause</span>
+<span class="sd">                                          failures if the devices do not exist</span>
+<span class="sd">                                          on the machine calling this function.</span>
+<span class="sd">                                          This can occur if the model is</span>
+<span class="sd">                                          trained on one device (with GPUs) and</span>
+<span class="sd">                                          then used on another device where</span>
+<span class="sd">                                          GPUs do not exist.  It can also occur</span>
+<span class="sd">                                          on the same device if the GPU</span>
+<span class="sd">                                          configurations are changed (by</span>
+<span class="sd">                                          setting CUDA_VISIBLE_DEVICES) or if</span>
+<span class="sd">                                          the desired device is out of memory.</span>
+<span class="sd">                                          See torch.load() documentation for</span>
+<span class="sd">                                          further details and options as this</span>
+<span class="sd">                                          parameter is simply a passthrough for</span>
+<span class="sd">                                          that. Defaults to &quot;cpu&quot; if path is</span>
+<span class="sd">                                          provided, else it is set to None and</span>
+<span class="sd">                                          the input provided by the user is</span>
+<span class="sd">                                          ignored.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            This doesn&#39;t provide safety against weights paths existing;</span>
+<span class="sd">            therefore, it will throw the arguments back up the stack instead</span>
+<span class="sd">            of silencing them.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_weights_path&quot;</span><span class="p">):</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_path</span>
+                <span class="n">map_location</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Told to load a model without a path to pretrained weights when &quot;</span>
+                    <span class="s2">&quot;this model has never been saved to a temporary location either.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">map_location</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.save"><a class="viewcode-back" href="../../../../nn.html#rfml.nn.model.base.Model.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the currently loaded/trained weights to disk.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str, optional): If provided, the weights will be saved at this</span>
+<span class="sd">                                  path, which is useful for immortalizing the</span>
+<span class="sd">                                  weights once training is completed.  If not</span>
+<span class="sd">                                  provided, then the model will create a</span>
+<span class="sd">                                  temporary file with a unique ID to store</span>
+<span class="sd">                                  the current weights at, and delete that file</span>
+<span class="sd">                                  when this object is deleted.  This can be</span>
+<span class="sd">                                  useful for storing intermediate weights</span>
+<span class="sd">                                  that will be used to reload &quot;the best weights&quot;</span>
+<span class="sd">                                  for an early stopping procedure, without</span>
+<span class="sd">                                  requiring the caller to care where they are</span>
+<span class="sd">                                  stored at.  Defaults to None.</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            This will overwrite the weights saved at this path (or the temporary</span>
+<span class="sd">            weights).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_weights_path&quot;</span><span class="p">):</span>
+                <span class="c1"># Use a random UUID to have a low probability of collisions</span>
+                <span class="c1"># Use a hidden file so the user never notices how ugly that is</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_weights_path</span> <span class="o">=</span> <span class="s2">&quot;.tmp-</span><span class="si">{}</span><span class="s2">.pt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_path</span>
+
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

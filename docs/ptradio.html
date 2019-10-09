@@ -1,0 +1,814 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyTorch Radio &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Neural Networks" href="nn.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbutils.html"> Notebook Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nn.html"> Neural Networks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> PyTorch Radio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.awgn">Additive White Gaussian Noise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.cfo">Center Frequency Offset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.constellation">Symbol Constellation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.downsample">Downsample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.modem">Linear Modem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.rrc">Root Raised Cosine (RRC) Filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.slicer">Signal Slicer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.ptradio.upsample">Upsample</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>PyTorch Radio</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ptradio.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pytorch-radio">
+<h1>PyTorch Radio<a class="headerlink" href="#pytorch-radio" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-rfml.ptradio.awgn">
+<span id="additive-white-gaussian-noise"></span><h2>Additive White Gaussian Noise<a class="headerlink" href="#module-rfml.ptradio.awgn" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch implementation of an AWGN wireless channel</p>
+<dl class="class">
+<dt id="rfml.ptradio.awgn.AWGN">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.awgn.</code><code class="sig-name descname">AWGN</code><span class="sig-paren">(</span><em class="sig-param">snr: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/awgn.html#AWGN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.awgn.AWGN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Additive White Gaussian Noise (AWGN) Channel model implemented in PyTorch.</p>
+<p>The noise power is provided by SNR, which can be updated by calling <em>set_snr</em>.
+Each forward pass will have a different noise realization but the same SNR (as long
+as it has not been changed).  This layer has no effect on sizes and can be made to
+be a pass through by setting SNR to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>snr</strong> (<em>float</em><em>, </em><em>optional</em>) – Signal-to-Noise ratio.  This can be overriden during
+operation by calling set_snr.  Defaults to None.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This layer assumes that the average energy per symbol of the underlying signal
+is 1 (0 dB) when calculating the noise power.</p>
+</div>
+<p>This module makese no assumptions about the shape of the input and returns an
+identically shaped output.</p>
+<dl class="method">
+<dt id="rfml.ptradio.awgn.AWGN.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/awgn.html#AWGN.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.awgn.AWGN.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.ptradio.awgn.AWGN.set_snr">
+<code class="sig-name descname">set_snr</code><span class="sig-paren">(</span><em class="sig-param">snr: float</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/awgn.html#AWGN.set_snr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.awgn.AWGN.set_snr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the signal to noise ratio in dB</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.ptradio.cfo">
+<span id="center-frequency-offset"></span><h2>Center Frequency Offset<a class="headerlink" href="#module-rfml.ptradio.cfo" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch implementation of center/carrier frequency offset.</p>
+<dl class="class">
+<dt id="rfml.ptradio.cfo.CFO">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.cfo.</code><code class="sig-name descname">CFO</code><span class="sig-paren">(</span><em class="sig-param">cfo: float = 0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/cfo.html#CFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.cfo.CFO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Center Frequency Offset Channel model implemented in PyTorch.</p>
+<p>A center frequency offset receiver effect can be simulated by</p>
+<div class="math notranslate nohighlight">
+\[s_{\text{rx}}(t) = e^{-j 2 \pi f_0 t} s_{\text{tx}}(t)\]</div>
+<p>Where <span class="math notranslate nohighlight">\(f_0\)</span> represents the normalized frequency offset in terms of the sample
+rate.</p>
+<p>Further, a complex number, which <span class="math notranslate nohighlight">\(s_{\text{tx}}\)</span> is a vector of, is
+represented as</p>
+<div class="math notranslate nohighlight">
+\[z = a + j b\]</div>
+<p>where <span class="math notranslate nohighlight">\(a\)</span> represents the real portion and <span class="math notranslate nohighlight">\(b\)</span> represents the imaginary
+portion of the number.</p>
+<p>Due to Euler’s identity, a complex sine wave can be represented using</p>
+<div class="math notranslate nohighlight">
+\[e^{-j 2 \pi f_o t} = \operatorname{cos}(2 \pi f_0 t) + j \operatorname{sin}(2 \pi f_0 t)\]</div>
+<p>Therefore,</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{aligned}
+    z_2 &amp;= z_1 \times e^{-j 2 \pi f_0 t}\\        &amp;= [a + jb] \times [\operatorname{cos}(2 \pi f_0 t) + j \operatorname{sin}(2 \pi f_0 t)]\\        &amp;= a \operatorname{cos}(2 \pi f_0 t) + a j \operatorname{sin}(2 \pi f_0 t) + b j \operatorname{cos}(2 \pi f_0 t) + b j^2 \operatorname{sin}(2 \pi f_0 t)\\        &amp;= a \operatorname{cos}(2 \pi f_0 t) + a j \operatorname{sin}(2 \pi f_0 t) + b j \operatorname{cos}(2 \pi f_0 t) - b \operatorname{sin}(2 \pi f_0 t)\\        &amp;= [a \operatorname{cos}(2 \pi f_0 t) - b \operatorname{sin}(2 \pi f_0 t)] + j[a \operatorname{sin}(2 \pi f_0 t) + b \operatorname{cos}(2 \pi f_0 t)]
+\end{aligned}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cfo</strong> (<em>float</em><em>, </em><em>optional</em>) – Center frequency offset percentage normalized to sample
+rate.  This can be updated by calling <em>set_cfo</em>.
+Defaults to 0.0.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the provided frequency offset is not in [-0.5, 0.5].</p>
+</dd>
+</dl>
+<p>This module assumes that the input tensor is in BxCxIQxN format and returns a Tensor
+with the same dimensions.</p>
+<dl class="method">
+<dt id="rfml.ptradio.cfo.CFO.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/cfo.html#CFO.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.cfo.CFO.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.ptradio.cfo.CFO.set_cfo">
+<code class="sig-name descname">set_cfo</code><span class="sig-paren">(</span><em class="sig-param">cfo: float</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/cfo.html#CFO.set_cfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.cfo.CFO.set_cfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the normalized center frequency offset to be used on the next pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cfo</strong> (<em>float</em>) – Center frequency offset percentage normalized to sample rate.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the provided frequency offset is not in [-0.5, 0.5].</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.ptradio.constellation">
+<span id="symbol-constellation"></span><h2>Symbol Constellation<a class="headerlink" href="#module-rfml.ptradio.constellation" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch implementation of (un)mapping symbol constellations.</p>
+<dl class="class">
+<dt id="rfml.ptradio.constellation.ConstellationMapper">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.constellation.</code><code class="sig-name descname">ConstellationMapper</code><span class="sig-paren">(</span><em class="sig-param">constellation: numpy.ndarray</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Layer that transforms “chunks” into symbols in the forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>constellation</strong> (<em>np.ndarray</em>) – List of complex valued points in the constellation
+(2xM numpy array where M is the order of the
+modulation e.g. 2 for BPSK, 4 for QPSK, etc.)</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the constellation does not match the expected 2xM shape.</p>
+</dd>
+</dl>
+<p>The forward pass should include Long Tensors that are in the half-open interval
+[0-M).  The output of the forward pass will then be the symbol at that index in the
+constellation.</p>
+<p>This module assumes that the input is [N] and extends the output to be of the format
+[BxCxIQxN] where B and C are 1, IQ is 2, and N matches the input.</p>
+<dl class="method">
+<dt id="rfml.ptradio.constellation.ConstellationMapper.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationMapper.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationMapper.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.ptradio.constellation.ConstellationMapper.get_M">
+<code class="sig-name descname">get_M</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationMapper.get_M"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationMapper.get_M" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of symbols in the constellation/order of the modulation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.ptradio.constellation.ConstellationMapper.get_bps">
+<code class="sig-name descname">get_bps</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationMapper.get_bps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationMapper.get_bps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of bits per symbol</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This could be fractional if M is not a power of 2.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rfml.ptradio.constellation.ConstellationUnmapper">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.constellation.</code><code class="sig-name descname">ConstellationUnmapper</code><span class="sig-paren">(</span><em class="sig-param">constellation: numpy.ndarray</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationUnmapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationUnmapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Layer that transforms symbols into “chunks” in the forward pass via a nearest
+neighbors algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>constellation</strong> (<em>np.ndarray</em>) – List of complex valued points in the constellation
+(2xM numpy array where M is the order of the
+modulation e.g. 2 for BPSK, 4 for QPSK, etc.)</p>
+</dd>
+</dl>
+<p>The forward pass should provide complex valued symbols and the output will be Long
+Tensors that are in the half-open interval [0-M).</p>
+<p>This module assumes that the input is [BxCxIQxN] and assumes that B and C are both
+1.  Therefore, the output is provided as [N].</p>
+<dl class="method">
+<dt id="rfml.ptradio.constellation.ConstellationUnmapper.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationUnmapper.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationUnmapper.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.ptradio.constellation.ConstellationUnmapper.get_M">
+<code class="sig-name descname">get_M</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationUnmapper.get_M"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationUnmapper.get_M" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of symbols in the constellation/order of the modulation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.ptradio.constellation.ConstellationUnmapper.get_bps">
+<code class="sig-name descname">get_bps</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/rfml/ptradio/constellation.html#ConstellationUnmapper.get_bps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.constellation.ConstellationUnmapper.get_bps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of bits per symbol</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This could be fractional if M is not a power of 2.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.ptradio.downsample">
+<span id="downsample"></span><h2>Downsample<a class="headerlink" href="#module-rfml.ptradio.downsample" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch implementation of downsampling.</p>
+<dl class="class">
+<dt id="rfml.ptradio.downsample.Downsample">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.downsample.</code><code class="sig-name descname">Downsample</code><span class="sig-paren">(</span><em class="sig-param">offset: int = 0</em>, <em class="sig-param">d: int = 8</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/downsample.html#Downsample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.downsample.Downsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>PyTorch downsampling implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>offset</strong> (<em>int</em><em>, </em><em>optional</em>) – Transient samples at the beginning and end of the signal
+to leave off of the output (e.g. filter transients).
+Defaults to 0.</p></li>
+<li><p><strong>d</strong> (<em>int</em><em>, </em><em>optional</em>) – Decimation factor – only integer valued sample rate
+conversions are allowed. Defaults to 8.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If offset is less than 0.</p></li>
+<li><p><strong>ValueError</strong> – If d is less than 2.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This module assumes that the time dimension is 3 (e.g. [BxCxIQxN]).  It returns a
+tensor in the same format, but, the output has been downsampled in the time
+dimension (e.g. [BxCxIQxN/D] ignoring any provided offsets).</p>
+<dl class="method">
+<dt id="rfml.ptradio.downsample.Downsample.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/downsample.html#Downsample.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.downsample.Downsample.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.ptradio.modem">
+<span id="linear-modem"></span><h2>Linear Modem<a class="headerlink" href="#module-rfml.ptradio.modem" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="rfml.ptradio.modem.Receiver">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.modem.</code><code class="sig-name descname">Receiver</code><span class="sig-paren">(</span><em class="sig-param">modulation: str</em>, <em class="sig-param">alpha: float = 0.35</em>, <em class="sig-param">sps: int = 8</em>, <em class="sig-param">filter_span: int = 8</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/modem.html#Receiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.modem.Receiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class containing a full receive chain.</p>
+<p>The basic chain structure can be described as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[Baseband IQ Input]━━[RRC]━━[Downsample]━━[Constellation Unmapper]━━[Pack]━━[Output]
+</pre></div>
+</div>
+<p>After being constructed, the user can call demodulate either with their own IQ data
+(shown as “Baseband IQ Input” above) and this data is assumed to be formatted as
+(1x1x2xN) which is the output of the Transmitter.  The output of demodulate is then
+a list of bits (1s and 0s) that can be analyzed for bit error rate calculations or
+other applications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modulation</strong> (<em>str</em>) – Modulation format to use.  Currently supported values are:
+- BPSK
+- QPSK
+- 8PSK
+- QAM16
+- QAM64</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Roll-off factor for the RRC filter. Defaults to 0.35.</p></li>
+<li><p><strong>sps</strong> (<em>int</em><em>, </em><em>optional</em>) – Sample per symbol for Upsample. Defaults to 8.</p></li>
+<li><p><strong>filter_span</strong> (<em>int</em><em>, </em><em>optional</em>) – Half-sided RRC filter span in symbols. Defaults to
+8.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the constellation is unknown.</p></li>
+<li><p><strong>ValueError</strong> – If sps is not at least 2.</p></li>
+<li><p><strong>ValueError</strong> – If alpha is not in (0, 1).</p></li>
+<li><p><strong>ValueError</strong> – If filter span is not positive.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This receive chain is very simplistic and assumes both frame and symbol
+synchronization – in other words, its meant as a simple simulation toy and not
+as an actual receiver implementation.</p>
+</div>
+<dl class="method">
+<dt id="rfml.ptradio.modem.Receiver.demodulate">
+<code class="sig-name descname">demodulate</code><span class="sig-paren">(</span><em class="sig-param">iq: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="_modules/rfml/ptradio/modem.html#Receiver.demodulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.modem.Receiver.demodulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Demodulate a signal at baseband and return a list of bits (1s and 0s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iq</strong> (<em>torch.Tensor</em>) – Complex baseband signal in (1x1x2xN) as output by
+Transmitter.modulate().</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the provided IQ does not have the shape (1x1x2xN).</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Demodulated bits.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rfml.ptradio.modem.Transmitter">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.modem.</code><code class="sig-name descname">Transmitter</code><span class="sig-paren">(</span><em class="sig-param">modulation: str</em>, <em class="sig-param">alpha: float = 0.35</em>, <em class="sig-param">sps: int = 8</em>, <em class="sig-param">filter_span: int = 8</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/modem.html#Transmitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.modem.Transmitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class containing a full transmit chain.</p>
+<p>The basic chain structure can be described as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    [Random]━┓
+[User Input]━┻━[Unpack]━━[Constellation Mapper]━━[Upsample]━━[RRC]━━[Output]
+</pre></div>
+</div>
+<p>After being constructed, the user can call modulate either with their own data
+(shown as “User Input” above) or they can pass in a set number of symbols in order
+to have “Random” data generated.  Either way, the output is always IQ at baseband.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modulation</strong> (<em>str</em>) – <p>Linear modulation format to use.  Currently supported values
+are:</p>
+<blockquote>
+<div><ul>
+<li><p>BPSK</p></li>
+<li><p>QPSK</p></li>
+<li><p>8PSK</p></li>
+<li><p>QAM16</p></li>
+<li><p>QAM64</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Roll-off factor for the RRC filter. Defaults to 0.35.</p></li>
+<li><p><strong>sps</strong> (<em>int</em><em>, </em><em>optional</em>) – Sample per symbol for Upsample. Defaults to 8.</p></li>
+<li><p><strong>filter_span</strong> (<em>int</em><em>, </em><em>optional</em>) – Half-sided RRC filter span in symbols. Defaults to
+8.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the constellation is unknown.</p></li>
+<li><p><strong>ValueError</strong> – If sps is not at least 2.</p></li>
+<li><p><strong>ValueError</strong> – If alpha is not in (0, 1).</p></li>
+<li><p><strong>ValueError</strong> – If filter span is not positive.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="rfml.ptradio.modem.Transmitter.modulate">
+<code class="sig-name descname">modulate</code><span class="sig-paren">(</span><em class="sig-param">bits: List[int] = None</em>, <em class="sig-param">n_symbols: int = 10000</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/modem.html#Transmitter.modulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.modem.Transmitter.modulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modulate a provided list of bits (1s and 0s) or random data of a set length.</p>
+<p>If you wish to provide your own data, which is useful for later calculating the
+bit error rate, then you can directly pass in a list of bits that have been
+generated by your application (or randomly generated).</p>
+<p>If instead you wish to simply get some quick data examples and don’t care about
+the underlying bit stream, then you can call this function with no arguments or
+override n_symbols to generate longer/shorter sequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bits</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of bits to modulate. Defaults to None.</p></li>
+<li><p><strong>n_symbols</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of random symbols to generate. Defaults to
+10000.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If bits is not provided and you set the number of symbols &lt;= 0.</p></li>
+<li><p><strong>ValueError</strong> – If the bit stream would have to be zero padded for transmisison.</p></li>
+<li><p><strong>ValueError</strong> – If <em>bits</em> contains values other than just 1 and 0.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Modulated data at baseband (1x1x2xn_symbols)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="rfml.ptradio.modem.theoreticalBER">
+<code class="sig-prename descclassname">rfml.ptradio.modem.</code><code class="sig-name descname">theoreticalBER</code><span class="sig-paren">(</span><em class="sig-param">snr: int</em>, <em class="sig-param">modulation: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/rfml/ptradio/modem.html#theoreticalBER"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.modem.theoreticalBER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lookup the theoretical BER for a given modulation scheme that has been
+precomputed using MATLAB’s <em>berawgn</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snr</strong> (<em>int</em>) – Signal-to-Noise ratio (<span class="math notranslate nohighlight">\(E_s/N_0\)</span> not <span class="math notranslate nohighlight">\(E_b/N_0\)</span>).</p></li>
+<li><p><strong>modulation</strong> (<em>str</em>) – <p>Name of the modulation format – currently supported options
+are:</p>
+<blockquote>
+<div><ul>
+<li><p>BSPK</p></li>
+<li><p>QPSK</p></li>
+<li><p>8PSK</p></li>
+<li><p>QAM16</p></li>
+<li><p>QAM64</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If snr is not in [0-20].</p></li>
+<li><p><strong>ValueError</strong> – If modulation is unknown</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Theoretical BER &#64; snr (Es/N0) for modulation</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>MatLab takes in <span class="math notranslate nohighlight">\(E_b/N_0\)</span> for calculations as that is what is
+typically used and plotted in most literature.  This code has chosen to use
+<span class="math notranslate nohighlight">\(E_s/N_0\)</span> instead which is easily related back to <span class="math notranslate nohighlight">\(E_b/N_0\)</span> through:</p>
+<div class="math notranslate nohighlight">
+\[\frac{E_s}{N_0} = \frac{E_b}{N_0} - 10*log10(log2(M))\]</div>
+<p>Where <span class="math notranslate nohighlight">\(M\)</span> is the order of the modulation.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.ptradio.rrc">
+<span id="root-raised-cosine-rrc-filter"></span><h2>Root Raised Cosine (RRC) Filter<a class="headerlink" href="#module-rfml.ptradio.rrc" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch implementation of a Root Raised Cosine filter</p>
+<dl class="class">
+<dt id="rfml.ptradio.rrc.RRC">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.rrc.</code><code class="sig-name descname">RRC</code><span class="sig-paren">(</span><em class="sig-param">alpha: float = 0.35</em>, <em class="sig-param">sps: int = 8</em>, <em class="sig-param">filter_span: int = 8</em>, <em class="sig-param">add_pad: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/rrc.html#RRC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.rrc.RRC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root Raised Cosine filter implemented as a PyTorch convolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Roll-off factor of the filter. Defaults to 0.35.</p></li>
+<li><p><strong>sps</strong> (<em>int</em><em>, </em><em>optional</em>) – Samples per symbol. Defaults to 8.</p></li>
+<li><p><strong>filter_span</strong> (<em>int</em><em>, </em><em>optional</em>) – One-sided filter span in number of symbols.
+Defaults to 8.</p></li>
+<li><p><strong>add_pad</strong> (<em>bool</em><em>, </em><em>optional</em>) – True if padding should be added to simulate a tap
+delay.  This should be True when this module is used
+as a pulse shaping filter and False when this module
+is used as a matched filter (because the extra data
+is useless anyways). Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If alpha is not in the interval (0.0, 1.0)</p></li>
+<li><p><strong>ValueError</strong> – If sps is not 2 or more</p></li>
+<li><p><strong>ValueError</strong> – If filter_span is not a positive integer</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="rfml.ptradio.rrc.RRC.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/rrc.html#RRC.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.rrc.RRC.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.ptradio.slicer">
+<span id="signal-slicer"></span><h2>Signal Slicer<a class="headerlink" href="#module-rfml.ptradio.slicer" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch implementation of an IQ Signal Slicer</p>
+<dl class="class">
+<dt id="rfml.ptradio.slicer.Slicer">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.slicer.</code><code class="sig-name descname">Slicer</code><span class="sig-paren">(</span><em class="sig-param">width: int</em>, <em class="sig-param">offset: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/slicer.html#Slicer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.slicer.Slicer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn long continuous signals into discrete examples with a fixed width.</p>
+<p>This can be thought of as batching up discrete examples to perform classification on
+in a real system.  It starts at <em>offset</em> and creates as many examples as needed to
+fit all (though it will not create undersized examples so some may be thrown away)
+samples into discrete chunks.  The examples are then concatenated in the batch
+dimension.  The channel and IQ dimensions remain unchanged and naturally the time
+dimension will be identical to <em>width</em>.</p>
+<p>This module is differentiable and can therefore be directly integrated in a training
+chain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<em>int</em>) – Size of the examples or “number of samples” in the time dimension.</p></li>
+<li><p><strong>offset</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples to skip at the beginning and end.
+This can be useful for ignoring filter transients on the
+sides where the data is unusable.  Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If width is not a positive integer.</p></li>
+<li><p><strong>ValueError</strong> – If offset is negative.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This module assumes that the input is formatted as BxCxIQxT.  The returned output
+from the forward pass will have a large batch dimension and the time dimension will
+match the <em>width</em> provided.  The other dimensions are left unchanged.</p>
+<dl class="method">
+<dt id="rfml.ptradio.slicer.Slicer.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/slicer.html#Slicer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.slicer.Slicer.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.ptradio.upsample">
+<span id="upsample"></span><h2>Upsample<a class="headerlink" href="#module-rfml.ptradio.upsample" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch implementation of upsampling (inserting &lt;i-1&gt; zeros).</p>
+<dl class="class">
+<dt id="rfml.ptradio.upsample.Upsample">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.ptradio.upsample.</code><code class="sig-name descname">Upsample</code><span class="sig-paren">(</span><em class="sig-param">i: int = 8</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/ptradio/upsample.html#Upsample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.upsample.Upsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>PyTorch upsampling implementation.</p>
+<p>This module upsamples by inserting &lt;i-1&gt; zeros in between samples in the time
+dimension.  It does not low pass filter after this and assumes that the filter is a
+separate module if desired.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>rfml.ptradio.RRC</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>i</strong> (<em>int</em><em>, </em><em>optional</em>) – Interpolation factor – only integer valued sample rate
+conversions are allowed. Defaults to 8.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If i is less than 2.</p>
+</dd>
+</dl>
+<p>This module assumes that the input is formatted as BxCxIQxT.  The time dimension is
+extended by a factor of <em>i</em>, as provided, and all other dimensions are untouched.</p>
+<dl class="method">
+<dt id="rfml.ptradio.upsample.Upsample.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/ptradio/upsample.html#Upsample.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.ptradio.upsample.Upsample.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="nn.html" class="btn btn-neutral float-left" title="Neural Networks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

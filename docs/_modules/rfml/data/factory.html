@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rfml.data.factory &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html"> Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nbutils.html"> Notebook Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nn.html"> Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ptradio.html"> PyTorch Radio</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>rfml.data.factory</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for rfml.data.factory</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Simplistic factory pattern for swapping of datasets.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Bryse Flowers &lt;brysef@vt.edu&gt;&quot;</span>
+
+<span class="c1"># External Includes</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
+
+<span class="c1"># Internal Includes</span>
+<span class="kn">from</span> <span class="nn">.converters</span> <span class="k">import</span> <span class="n">load_RML201610A_dataset</span><span class="p">,</span> <span class="n">load_RML201610B_dataset</span>
+<span class="kn">from</span> <span class="nn">.dataset</span> <span class="k">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">.encoder</span> <span class="k">import</span> <span class="n">Encoder</span>
+
+
+<div class="viewcode-block" id="build_dataset"><a class="viewcode-back" href="../../../data.html#rfml.data.factory.build_dataset">[docs]</a><span class="k">def</span> <span class="nf">build_dataset</span><span class="p">(</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">test_pct</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">val_pct</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Encoder</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Opinionated factory method that allows easy loading of different datasets.</span>
+
+<span class="sd">    This method makes an assumption about the labels to use for each dataset -- if you</span>
+<span class="sd">    need more extensive control then you can call the underlying method directly.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name (str): Name of the dataset to load.  Currently supported values</span>
+<span class="sd">                            are:</span>
+<span class="sd">                            - RML2016.10A</span>
+<span class="sd">                            - RML2016.10B</span>
+<span class="sd">        test_pct (float, optional): Percentage of the entire Dataset that should be</span>
+<span class="sd">                                    withheld as a test set. Defaults to 0.3.</span>
+<span class="sd">        val_pct (float, optional): Percentage of the non-testing Dataset that should be</span>
+<span class="sd">                                   split out to use for validation in an early stopping</span>
+<span class="sd">                                   procedure. Defaults to 0.05.</span>
+<span class="sd">        path (str, optional): If provided, this is directly passed to the dataset</span>
+<span class="sd">                              converters so that they do not download the dataset from</span>
+<span class="sd">                              the internet (a costly operation) if you have already</span>
+<span class="sd">                              downloaded it yourself. Defaults to None.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If test_pct or val_pct are not between 0 and 1 (non-inclusive).</span>
+<span class="sd">        ValueError: If the dataset_name is unknown.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[Dataset, Dataset, Dataset, Encoder]: train, validation, test, encoder</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">test_pct</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">test_pct</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Testing percentage must be in the open set between (0-1).  &quot;</span>
+            <span class="s2">&quot;Not </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_pct</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">val_pct</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">val_pct</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Validation percentage must be in the open set between (0-1).  &quot;</span>
+            <span class="s2">&quot;Not </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_pct</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dataset_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;RML2016.10A&quot;</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_RML201610A_dataset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">le</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;WBFM&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;AM-DSB&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;AM-SSB&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;CPFSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;GFSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PAM4&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;BPSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;QPSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;8PSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;QAM16&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;QAM64&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">label_name</span><span class="o">=</span><span class="s2">&quot;Modulation&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">on</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Modulation&quot;</span><span class="p">,</span> <span class="s2">&quot;SNR&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">dataset_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;RML2016.10B&quot;</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_RML201610B_dataset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">le</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;WBFM&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;AM-DSB&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;CPFSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;GFSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;PAM4&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;BPSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;QPSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;8PSK&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;QAM16&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;QAM64&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">label_name</span><span class="o">=</span><span class="s2">&quot;Modulation&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">on</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Modulation&quot;</span><span class="p">,</span> <span class="s2">&quot;SNR&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown dataset (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">))</span>
+
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="n">test_pct</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">)</span>
+    <span class="n">train</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="n">val_pct</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">le</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

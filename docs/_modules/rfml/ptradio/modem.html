@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rfml.ptradio.modem &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html"> Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nbutils.html"> Notebook Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nn.html"> Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ptradio.html"> PyTorch Radio</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>rfml.ptradio.modem</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for rfml.ptradio.modem</h1><div class="highlight"><pre>
+<span></span><span class="c1"># External Includes</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+
+<span class="c1"># Internal Includes</span>
+<span class="kn">from</span> <span class="nn">.constellation</span> <span class="k">import</span> <span class="n">ConstellationMapper</span><span class="p">,</span> <span class="n">ConstellationUnmapper</span>
+<span class="kn">from</span> <span class="nn">.downsample</span> <span class="k">import</span> <span class="n">Downsample</span>
+<span class="kn">from</span> <span class="nn">.rrc</span> <span class="k">import</span> <span class="n">RRC</span>
+<span class="kn">from</span> <span class="nn">.upsample</span> <span class="k">import</span> <span class="n">Upsample</span>
+
+
+<div class="viewcode-block" id="theoreticalBER"><a class="viewcode-back" href="../../../ptradio.html#rfml.ptradio.modem.theoreticalBER">[docs]</a><span class="k">def</span> <span class="nf">theoreticalBER</span><span class="p">(</span><span class="n">snr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">modulation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Lookup the theoretical BER for a given modulation scheme that has been</span>
+<span class="sd">    precomputed using MATLAB&#39;s *berawgn*.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        snr (int): Signal-to-Noise ratio (:math:`E_s/N_0` not :math:`E_b/N_0`).</span>
+<span class="sd">        modulation (str): Name of the modulation format -- currently supported options</span>
+<span class="sd">                          are:</span>
+<span class="sd">                            - BSPK</span>
+<span class="sd">                            - QPSK</span>
+<span class="sd">                            - 8PSK</span>
+<span class="sd">                            - QAM16</span>
+<span class="sd">                            - QAM64</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If snr is not in [0-20].</span>
+<span class="sd">        ValueError: If modulation is unknown</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Theoretical BER @ snr (Es/N0) for modulation</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        MatLab takes in :math:`E_b/N_0` for calculations as that is what is</span>
+<span class="sd">        typically used and plotted in most literature.  This code has chosen to use</span>
+<span class="sd">        :math:`E_s/N_0` instead which is easily related back to :math:`E_b/N_0` through:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\frac{E_s}{N_0} = \\frac{E_b}{N_0} - 10*log10(log2(M))</span>
+
+<span class="sd">        Where :math:`M` is the order of the modulation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">snr</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">snr</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SNR must be in the range of 0-20 (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">snr</span><span class="p">))</span>
+
+    <span class="n">modulation</span> <span class="o">=</span> <span class="n">modulation</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;BPSK&quot;</span><span class="p">:</span>
+        <span class="c1"># berawgn((0:20), &#39;psk&#39;, 2, &#39;nondiff&#39;)</span>
+        <span class="n">bpskBER</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.07865</span><span class="p">,</span>
+            <span class="mf">0.056282</span><span class="p">,</span>
+            <span class="mf">0.037506</span><span class="p">,</span>
+            <span class="mf">0.022878</span><span class="p">,</span>
+            <span class="mf">0.012501</span><span class="p">,</span>
+            <span class="mf">0.0059539</span><span class="p">,</span>
+            <span class="mf">0.0023883</span><span class="p">,</span>
+            <span class="mf">0.00077267</span><span class="p">,</span>
+            <span class="mf">0.00019091</span><span class="p">,</span>
+            <span class="mf">3.3627e-05</span><span class="p">,</span>
+            <span class="mf">3.8721e-06</span><span class="p">,</span>
+            <span class="mf">2.6131e-07</span><span class="p">,</span>
+            <span class="mf">9.006e-09</span><span class="p">,</span>
+            <span class="mf">1.3329e-10</span><span class="p">,</span>
+            <span class="mf">6.8102e-13</span><span class="p">,</span>
+            <span class="mf">9.124e-16</span><span class="p">,</span>
+            <span class="mf">2.2674e-19</span><span class="p">,</span>
+            <span class="mf">6.759e-24</span><span class="p">,</span>
+            <span class="mf">1.396e-29</span><span class="p">,</span>
+            <span class="mf">1.0011e-36</span><span class="p">,</span>
+            <span class="mf">1.0442e-45</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">bpskBER</span><span class="p">[</span><span class="n">snr</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;QPSK&quot;</span><span class="p">:</span>
+        <span class="c1"># berawgn((0:20) - 10*log10(log2(4)), &#39;psk&#39;, 4, &#39;nondiff&#39;)</span>
+        <span class="n">qpskBER</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.15866</span><span class="p">,</span>
+            <span class="mf">0.13093</span><span class="p">,</span>
+            <span class="mf">0.10403</span><span class="p">,</span>
+            <span class="mf">0.078896</span><span class="p">,</span>
+            <span class="mf">0.056495</span><span class="p">,</span>
+            <span class="mf">0.037679</span><span class="p">,</span>
+            <span class="mf">0.023007</span><span class="p">,</span>
+            <span class="mf">0.012587</span><span class="p">,</span>
+            <span class="mf">0.0060044</span><span class="p">,</span>
+            <span class="mf">0.0024133</span><span class="p">,</span>
+            <span class="mf">0.0007827</span><span class="p">,</span>
+            <span class="mf">0.00019399</span><span class="p">,</span>
+            <span class="mf">3.4303e-05</span><span class="p">,</span>
+            <span class="mf">3.9692e-06</span><span class="p">,</span>
+            <span class="mf">2.6951e-07</span><span class="p">,</span>
+            <span class="mf">9.361e-09</span><span class="p">,</span>
+            <span class="mf">1.399e-10</span><span class="p">,</span>
+            <span class="mf">7.236e-13</span><span class="p">,</span>
+            <span class="mf">9.845e-16</span><span class="p">,</span>
+            <span class="mf">2.4945e-19</span><span class="p">,</span>
+            <span class="mf">7.6199e-24</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">qpskBER</span><span class="p">[</span><span class="n">snr</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;8PSK&quot;</span><span class="p">:</span>
+        <span class="c1"># berawgn((0:20) - 10*log10(log2(8)), &#39;psk&#39;, 8, &#39;nondiff&#39;)</span>
+        <span class="n">psk8BER</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.24115</span><span class="p">,</span>
+            <span class="mf">0.21586</span><span class="p">,</span>
+            <span class="mf">0.19029</span><span class="p">,</span>
+            <span class="mf">0.16504</span><span class="p">,</span>
+            <span class="mf">0.14064</span><span class="p">,</span>
+            <span class="mf">0.11754</span><span class="p">,</span>
+            <span class="mf">0.096025</span><span class="p">,</span>
+            <span class="mf">0.076242</span><span class="p">,</span>
+            <span class="mf">0.058318</span><span class="p">,</span>
+            <span class="mf">0.042467</span><span class="p">,</span>
+            <span class="mf">0.029013</span><span class="p">,</span>
+            <span class="mf">0.018277</span><span class="p">,</span>
+            <span class="mf">0.010399</span><span class="p">,</span>
+            <span class="mf">0.0052101</span><span class="p">,</span>
+            <span class="mf">0.0022266</span><span class="p">,</span>
+            <span class="mf">0.00077982</span><span class="p">,</span>
+            <span class="mf">0.00021283</span><span class="p">,</span>
+            <span class="mf">4.2476e-05</span><span class="p">,</span>
+            <span class="mf">5.7223e-06</span><span class="p">,</span>
+            <span class="mf">4.704e-07</span><span class="p">,</span>
+            <span class="mf">2.0779e-08</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">psk8BER</span><span class="p">[</span><span class="n">snr</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;QAM16&quot;</span><span class="p">:</span>
+        <span class="c1"># berawgn((0:20) - 10*log10(log2(16)), &#39;qam&#39;, 16)</span>
+        <span class="n">qam16BER</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.28728</span><span class="p">,</span>
+            <span class="mf">0.26248</span><span class="p">,</span>
+            <span class="mf">0.23723</span><span class="p">,</span>
+            <span class="mf">0.21216</span><span class="p">,</span>
+            <span class="mf">0.18774</span><span class="p">,</span>
+            <span class="mf">0.16417</span><span class="p">,</span>
+            <span class="mf">0.14144</span><span class="p">,</span>
+            <span class="mf">0.11944</span><span class="p">,</span>
+            <span class="mf">0.098171</span><span class="p">,</span>
+            <span class="mf">0.077858</span><span class="p">,</span>
+            <span class="mf">0.058993</span><span class="p">,</span>
+            <span class="mf">0.042212</span><span class="p">,</span>
+            <span class="mf">0.02813</span><span class="p">,</span>
+            <span class="mf">0.017159</span><span class="p">,</span>
+            <span class="mf">0.0093756</span><span class="p">,</span>
+            <span class="mf">0.0044654</span><span class="p">,</span>
+            <span class="mf">0.0017912</span><span class="p">,</span>
+            <span class="mf">0.00057951</span><span class="p">,</span>
+            <span class="mf">0.00014318</span><span class="p">,</span>
+            <span class="mf">2.522e-05</span><span class="p">,</span>
+            <span class="mf">2.9041e-06</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">qam16BER</span><span class="p">[</span><span class="n">snr</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;QAM64&quot;</span><span class="p">:</span>
+        <span class="c1"># berawgn((0:20) - 10*log10(log2(64)), &#39;qam&#39;, 64)</span>
+        <span class="n">qam64BER</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.35986</span><span class="p">,</span>
+            <span class="mf">0.34279</span><span class="p">,</span>
+            <span class="mf">0.32447</span><span class="p">,</span>
+            <span class="mf">0.30492</span><span class="p">,</span>
+            <span class="mf">0.28421</span><span class="p">,</span>
+            <span class="mf">0.26251</span><span class="p">,</span>
+            <span class="mf">0.2401</span><span class="p">,</span>
+            <span class="mf">0.21743</span><span class="p">,</span>
+            <span class="mf">0.19498</span><span class="p">,</span>
+            <span class="mf">0.17324</span><span class="p">,</span>
+            <span class="mf">0.15255</span><span class="p">,</span>
+            <span class="mf">0.13302</span><span class="p">,</span>
+            <span class="mf">0.11458</span><span class="p">,</span>
+            <span class="mf">0.097022</span><span class="p">,</span>
+            <span class="mf">0.080203</span><span class="p">,</span>
+            <span class="mf">0.064159</span><span class="p">,</span>
+            <span class="mf">0.049171</span><span class="p">,</span>
+            <span class="mf">0.035695</span><span class="p">,</span>
+            <span class="mf">0.024217</span><span class="p">,</span>
+            <span class="mf">0.015106</span><span class="p">,</span>
+            <span class="mf">0.0084864</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">qam64BER</span><span class="p">[</span><span class="n">snr</span><span class="p">]</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown modulation scheme: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modulation</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Transmitter"><a class="viewcode-back" href="../../../ptradio.html#rfml.ptradio.modem.Transmitter">[docs]</a><span class="k">class</span> <span class="nc">Transmitter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class containing a full transmit chain.</span>
+
+<span class="sd">    The basic chain structure can be described as:</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">            [Random]━┓</span>
+<span class="sd">        [User Input]━┻━[Unpack]━━[Constellation Mapper]━━[Upsample]━━[RRC]━━[Output]</span>
+
+<span class="sd">    After being constructed, the user can call modulate either with their own data</span>
+<span class="sd">    (shown as &quot;User Input&quot; above) or they can pass in a set number of symbols in order</span>
+<span class="sd">    to have &quot;Random&quot; data generated.  Either way, the output is always IQ at baseband.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        modulation (str): Linear modulation format to use.  Currently supported values</span>
+<span class="sd">                          are:</span>
+<span class="sd">                            - BPSK</span>
+<span class="sd">                            - QPSK</span>
+<span class="sd">                            - 8PSK</span>
+<span class="sd">                            - QAM16</span>
+<span class="sd">                            - QAM64</span>
+<span class="sd">        alpha (float, optional): Roll-off factor for the RRC filter. Defaults to 0.35.</span>
+<span class="sd">        sps (int, optional): Sample per symbol for Upsample. Defaults to 8.</span>
+<span class="sd">        filter_span (int, optional): Half-sided RRC filter span in symbols. Defaults to</span>
+<span class="sd">                                     8.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the constellation is unknown.</span>
+<span class="sd">        ValueError: If sps is not at least 2.</span>
+<span class="sd">        ValueError: If alpha is not in (0, 1).</span>
+<span class="sd">        ValueError: If filter span is not positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">modulation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.35</span><span class="p">,</span> <span class="n">sps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">filter_span</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="p">):</span>
+        <span class="n">constellation</span> <span class="o">=</span> <span class="n">_get_constellation</span><span class="p">(</span><span class="n">modulation</span><span class="o">=</span><span class="n">modulation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol_encoder</span> <span class="o">=</span> <span class="n">ConstellationMapper</span><span class="p">(</span><span class="n">constellation</span><span class="o">=</span><span class="n">constellation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsample</span> <span class="o">=</span> <span class="n">Upsample</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">sps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pulse_shape</span> <span class="o">=</span> <span class="n">RRC</span><span class="p">(</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">sps</span><span class="o">=</span><span class="n">sps</span><span class="p">,</span> <span class="n">filter_span</span><span class="o">=</span><span class="n">filter_span</span><span class="p">,</span> <span class="n">add_pad</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Transmitter.modulate"><a class="viewcode-back" href="../../../ptradio.html#rfml.ptradio.modem.Transmitter.modulate">[docs]</a>    <span class="k">def</span> <span class="nf">modulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_symbols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Modulate a provided list of bits (1s and 0s) or random data of a set length.</span>
+
+<span class="sd">        If you wish to provide your own data, which is useful for later calculating the</span>
+<span class="sd">        bit error rate, then you can directly pass in a list of bits that have been</span>
+<span class="sd">        generated by your application (or randomly generated).</span>
+
+<span class="sd">        If instead you wish to simply get some quick data examples and don&#39;t care about</span>
+<span class="sd">        the underlying bit stream, then you can call this function with no arguments or</span>
+<span class="sd">        override n_symbols to generate longer/shorter sequences.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bits (List[int], optional): List of bits to modulate. Defaults to None.</span>
+<span class="sd">            n_symbols (int, optional): Number of random symbols to generate. Defaults to</span>
+<span class="sd">                                       10000.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If bits is not provided and you set the number of symbols &lt;= 0.</span>
+<span class="sd">            ValueError: If the bit stream would have to be zero padded for transmisison.</span>
+<span class="sd">            ValueError: If *bits* contains values other than just 1 and 0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Modulated data at baseband (1x1x2xn_symbols)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">bits</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_symbols</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Must either provide data or a positive number of symbols to be faked &quot;</span>
+                <span class="s2">&quot;-- you provided </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_symbols</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">bits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_encoder</span><span class="o">.</span><span class="n">get_bps</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The number of bits input (</span><span class="si">{n_bits:d}</span><span class="s2">) would have to be padded to &quot;</span>
+                <span class="s2">&quot;be transmitted because the bits per symbol in the constellation &quot;</span>
+                <span class="s2">&quot;is </span><span class="si">{bps:d}</span><span class="s2">.  It is highly unlikely that was your intention and &quot;</span>
+                <span class="s2">&quot;therefore we&#39;re complaining now to avoid errors in your code &quot;</span>
+                <span class="s2">&quot;later.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_bits</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">bits</span><span class="p">),</span> <span class="n">bps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_encoder</span><span class="o">.</span><span class="n">get_bps</span><span class="p">())</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Encode from &quot;bits&quot; to &quot;chunks&quot; which are simply indexes of the symbols</span>
+        <span class="c1"># that are expected by the symbol encoder as a LongTensor (int64)</span>
+        <span class="k">if</span> <span class="n">bits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">bin_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bits</span><span class="p">):</span>
+                <span class="c1"># Force a binary encoding here by checking for 1, 0 equality</span>
+                <span class="c1"># If the value was not 1,0 then it won&#39;t match back up coming out of</span>
+                <span class="c1"># the receiver anyways and would therefore cause an error</span>
+                <span class="k">if</span> <span class="n">bit</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">bin_str</span> <span class="o">+=</span> <span class="s2">&quot;0&quot;</span>
+                <span class="k">elif</span> <span class="n">bit</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">bin_str</span> <span class="o">+=</span> <span class="s2">&quot;1&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Value of the passed in data at loc </span><span class="si">{}</span><span class="s2"> is not binary (e.g. &quot;</span>
+                        <span class="s2">&quot;1 or 0).  The value is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bit</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_str</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_encoder</span><span class="o">.</span><span class="n">get_bps</span><span class="p">():</span>
+                    <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bin_str</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+                    <span class="n">bin_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">chunks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">chunks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_encoder</span><span class="o">.</span><span class="n">get_M</span><span class="p">(),</span> <span class="n">size</span><span class="o">=</span><span class="n">n_symbols</span>
+            <span class="p">)</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
+
+        <span class="c1"># Modulate the baseband signal in complex format (represented as BxCxIQxN)</span>
+        <span class="n">symbols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_encoder</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="n">symbols</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pulse_shape</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div></div>
+
+
+<div class="viewcode-block" id="Receiver"><a class="viewcode-back" href="../../../ptradio.html#rfml.ptradio.modem.Receiver">[docs]</a><span class="k">class</span> <span class="nc">Receiver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class containing a full receive chain.</span>
+
+<span class="sd">    The basic chain structure can be described as:</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        [Baseband IQ Input]━━[RRC]━━[Downsample]━━[Constellation Unmapper]━━[Pack]━━[Output]</span>
+
+<span class="sd">    After being constructed, the user can call demodulate either with their own IQ data</span>
+<span class="sd">    (shown as &quot;Baseband IQ Input&quot; above) and this data is assumed to be formatted as</span>
+<span class="sd">    (1x1x2xN) which is the output of the Transmitter.  The output of demodulate is then</span>
+<span class="sd">    a list of bits (1s and 0s) that can be analyzed for bit error rate calculations or</span>
+<span class="sd">    other applications.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        modulation (str): Modulation format to use.  Currently supported values are:</span>
+<span class="sd">                            - BPSK</span>
+<span class="sd">                            - QPSK</span>
+<span class="sd">                            - 8PSK</span>
+<span class="sd">                            - QAM16</span>
+<span class="sd">                            - QAM64</span>
+<span class="sd">        alpha (float, optional): Roll-off factor for the RRC filter. Defaults to 0.35.</span>
+<span class="sd">        sps (int, optional): Sample per symbol for Upsample. Defaults to 8.</span>
+<span class="sd">        filter_span (int, optional): Half-sided RRC filter span in symbols. Defaults to</span>
+<span class="sd">                                     8.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the constellation is unknown.</span>
+<span class="sd">        ValueError: If sps is not at least 2.</span>
+<span class="sd">        ValueError: If alpha is not in (0, 1).</span>
+<span class="sd">        ValueError: If filter span is not positive.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        This receive chain is very simplistic and assumes both frame and symbol</span>
+<span class="sd">        synchronization -- in other words, its meant as a simple simulation toy and not</span>
+<span class="sd">        as an actual receiver implementation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">modulation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.35</span><span class="p">,</span> <span class="n">sps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">filter_span</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="p">):</span>
+        <span class="n">constellation</span> <span class="o">=</span> <span class="n">_get_constellation</span><span class="p">(</span><span class="n">modulation</span><span class="o">=</span><span class="n">modulation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_filter</span> <span class="o">=</span> <span class="n">RRC</span><span class="p">(</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">sps</span><span class="o">=</span><span class="n">sps</span><span class="p">,</span> <span class="n">filter_span</span><span class="o">=</span><span class="n">filter_span</span><span class="p">,</span> <span class="n">add_pad</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">downsample</span> <span class="o">=</span> <span class="n">Downsample</span><span class="p">(</span><span class="n">offset</span><span class="o">=</span><span class="n">sps</span> <span class="o">*</span> <span class="n">filter_span</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">sps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hard_decision</span> <span class="o">=</span> <span class="n">ConstellationUnmapper</span><span class="p">(</span><span class="n">constellation</span><span class="o">=</span><span class="n">constellation</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Receiver.demodulate"><a class="viewcode-back" href="../../../ptradio.html#rfml.ptradio.modem.Receiver.demodulate">[docs]</a>    <span class="k">def</span> <span class="nf">demodulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iq</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Demodulate a signal at baseband and return a list of bits (1s and 0s).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iq (torch.Tensor): Complex baseband signal in (1x1x2xN) as output by</span>
+<span class="sd">                               Transmitter.modulate().</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the provided IQ does not have the shape (1x1x2xN).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[int]: Demodulated bits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">iq</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span>
+            <span class="ow">or</span> <span class="n">iq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span>
+            <span class="ow">or</span> <span class="n">iq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span>
+            <span class="ow">or</span> <span class="n">iq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The provided IQ Tensor must have the shape 1x1x2xN -- &quot;</span>
+                <span class="s2">&quot;but your&#39;s has shape </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iq</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Demodulate the baseband signal assuming synchronization</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_filter</span><span class="p">(</span><span class="n">iq</span><span class="p">)</span>
+        <span class="n">symbol_estimates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hard_decision</span><span class="p">(</span><span class="n">symbol_estimates</span><span class="p">)</span>
+
+        <span class="c1"># Convert the &quot;chunks&quot; back into an binary array (1s and 0s)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">chunks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]):</span>
+            <span class="n">bin_str</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
+            <span class="c1"># bin_str -&gt; 0b0101 therefore ignore the first two characters</span>
+            <span class="n">bin_str</span> <span class="o">=</span> <span class="n">bin_str</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="c1"># Zero pad the beginning of the string</span>
+            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_str</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">hard_decision</span><span class="o">.</span><span class="n">get_bps</span><span class="p">():</span>
+                <span class="n">bin_str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">+</span> <span class="n">bin_str</span>
+
+            <span class="c1"># Encode the rest of them as integers in the list and add some defensive</span>
+            <span class="c1"># programming in case I&#39;ve screwed up the logic of this conversion</span>
+            <span class="k">for</span> <span class="n">bin_char</span> <span class="ow">in</span> <span class="n">bin_str</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">bin_char</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bin_char</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Unknown value encounter from bin() -- </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bin_char</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_get_constellation</span><span class="p">(</span><span class="n">modulation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">modulation</span> <span class="o">=</span> <span class="n">modulation</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;BPSK&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_normalize_and_convert</span><span class="p">(</span><span class="n">_bpsk_constellation</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;QPSK&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_normalize_and_convert</span><span class="p">(</span><span class="n">_qpsk_constellation</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;8PSK&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_normalize_and_convert</span><span class="p">(</span><span class="n">_8psk_constellation</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;QAM16&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_normalize_and_convert</span><span class="p">(</span><span class="n">_qam16_constellation</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">modulation</span> <span class="o">==</span> <span class="s2">&quot;QAM64&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_normalize_and_convert</span><span class="p">(</span><span class="n">_qam64_constellation</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown Modulation Scheme (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modulation</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_normalize_and_convert</span><span class="p">(</span><span class="n">constellation</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Normalize constellation power (Es) to 1 and convert to real numbers (2xM)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">constellation</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">constellation</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">power</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">constellation</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">constellation</span><span class="o">.</span><span class="n">imag</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
+<span class="c1"># Private Constants Definitions for Grey Coded Constellation Maps</span>
+<span class="n">_bpsk_constellation</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span><span class="p">))</span>
+<span class="n">_qpsk_constellation</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mf">0.7071067690849304</span> <span class="o">+</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.7071067690849304</span> <span class="o">+</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.7071067690849304</span> <span class="o">-</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.7071067690849304</span> <span class="o">-</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">_8psk_constellation</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.7071067690849304</span> <span class="o">+</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.7071067690849304</span> <span class="o">+</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.7071067690849304</span> <span class="o">-</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.7071067690849304</span> <span class="o">-</span> <span class="mf">0.7071067690849304</span><span class="n">j</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">_qam16_constellation</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.001551628112793</span> <span class="o">-</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.001551628112793</span> <span class="o">-</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.001551628112793</span> <span class="o">+</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.001551628112793</span> <span class="o">+</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.33385056257247925</span> <span class="o">-</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.33385056257247925</span> <span class="o">-</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.33385056257247925</span> <span class="o">+</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.33385056257247925</span> <span class="o">+</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.001551628112793</span> <span class="o">-</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.001551628112793</span> <span class="o">-</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.001551628112793</span> <span class="o">+</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.001551628112793</span> <span class="o">+</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.33385056257247925</span> <span class="o">-</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.33385056257247925</span> <span class="o">-</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.33385056257247925</span> <span class="o">+</span> <span class="mf">1.001551628112793</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.33385056257247925</span> <span class="o">+</span> <span class="mf">0.33385056257247925</span><span class="n">j</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">_qam64_constellation</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.1500126123428345</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.8214375972747803</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.1642875224351883</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">-</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">1.1500126123428345</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">0.8214375972747803</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">0.1642875224351883</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.4928625524044037</span> <span class="o">+</span> <span class="mf">0.4928625524044037</span><span class="n">j</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

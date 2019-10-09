@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Notebook Utilities &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Neural Networks" href="nn.html" />
+    <link rel="prev" title="Data" href="data.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Notebook Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.nbutils.data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rfml.nbutils.plot">Plot</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nn.html"> Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ptradio.html"> PyTorch Radio</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Notebook Utilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/nbutils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="notebook-utilities">
+<h1>Notebook Utilities<a class="headerlink" href="#notebook-utilities" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-rfml.nbutils.data">
+<span id="data"></span><h2>Data<a class="headerlink" href="#module-rfml.nbutils.data" title="Permalink to this headline">¶</a></h2>
+<p>Data (generation) helpers to simplify the code flow of Jupyter notebooks.</p>
+</div>
+<div class="section" id="module-rfml.nbutils.plot">
+<span id="plot"></span><h2>Plot<a class="headerlink" href="#module-rfml.nbutils.plot" title="Permalink to this headline">¶</a></h2>
+<p>Plotting helpers to simplify the code flow of Jupyter notebooks.</p>
+<dl class="function">
+<dt id="rfml.nbutils.plot.plot_IQ">
+<code class="sig-prename descclassname">rfml.nbutils.plot.</code><code class="sig-name descname">plot_IQ</code><span class="sig-paren">(</span><em class="sig-param">iq: numpy.ndarray</em>, <em class="sig-param">title: str = None</em>, <em class="sig-param">figsize: Tuple[float</em>, <em class="sig-param">float] = (10.0</em>, <em class="sig-param">5.0)</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/rfml/nbutils/plot.html#plot_IQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nbutils.plot.plot_IQ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot IQ data in the time dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iq</strong> (<em>np.ndarray</em>) – Complex samples in a 2xN numpy array (IQ x Time)</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title to put above the plot. Defaults to None.</p></li>
+<li><p><strong>figsize</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Size of the figure to create.  Defaults
+to (10.0, 5.0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the IQ array is not 2xN</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Figure that the data was plotted onto (e.g. for saving plot)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[Figure]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rfml.nbutils.plot.plot_acc_vs_snr">
+<code class="sig-prename descclassname">rfml.nbutils.plot.</code><code class="sig-name descname">plot_acc_vs_snr</code><span class="sig-paren">(</span><em class="sig-param">acc_vs_snr: Iterable[float], snr: Iterable[float], title: str = None, figsize: Tuple[float, float] = (10.0, 5.0), annotate: bool = True</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/rfml/nbutils/plot.html#plot_acc_vs_snr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nbutils.plot.plot_acc_vs_snr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot Classification Accuracy vs Signal-to-Noise Ratio (SNR).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>acc_vs_snr</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Classification accuracy at each SNR.</p></li>
+<li><p><strong>snr</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Signal-to-Noise Ratios (SNR) that were used for
+evaluation.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title to put above the plot.  Defaults to None.</p></li>
+<li><p><strong>figsize</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Size of the figure to create. Defaults
+to (10.0, 5.0).</p></li>
+<li><p><strong>annotate</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True then the peak accuracy will be annotated with
+a horizontal line and with text describing the value.
+If False, no lines or text are added on top of the
+plotted data.  Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the lengths of acc_vs_snr and snr do not match</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Figure that the results were plotted onto (e.g. for saving plot)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rfml.nbutils.plot.plot_acc_vs_spr">
+<code class="sig-prename descclassname">rfml.nbutils.plot.</code><code class="sig-name descname">plot_acc_vs_spr</code><span class="sig-paren">(</span><em class="sig-param">acc_vs_spr: Iterable[float], spr: Iterable[float], title: str = None, figsize: Tuple[float, float] = (10.0, 5.0), annotate: bool = True</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/rfml/nbutils/plot.html#plot_acc_vs_spr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nbutils.plot.plot_acc_vs_spr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot Classification Accuracy vs Signal-to-Perturbation Ratio (SPR).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>acc_vs_spr</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Classification accuracy at each SPR.</p></li>
+<li><p><strong>spr</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Signal-to-Perturbation Ratios (SPR) that were used for
+evaluation.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title to put above the plot.  Defaults to None.</p></li>
+<li><p><strong>figsize</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Size of the figure to create. Defaults
+to (10.0, 5.0).</p></li>
+<li><p><strong>annotate</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True then the peak accuracy will be annotated with
+a horizontal line and with text describing the value.
+If False, no lines or text are added on top of the
+plotted data.  Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the lengths of acc_vs_spr and spr do not match</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Figure that the results were plotted onto (e.g. for saving plot)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rfml.nbutils.plot.plot_confusion">
+<code class="sig-prename descclassname">rfml.nbutils.plot.</code><code class="sig-name descname">plot_confusion</code><span class="sig-paren">(</span><em class="sig-param">cm: numpy.ndarray, labels: List[str], title: str = None, figsize: Tuple[float, float] = (10.0, 5.0), cmap: matplotlib.colors.Colormap = &lt;matplotlib.colors.LinearSegmentedColormap object&gt;</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/rfml/nbutils/plot.html#plot_confusion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nbutils.plot.plot_confusion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a confusion matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cm</strong> (<em>np.ndarray</em>) – NxN array representing the confusion matrix for each
+true/predicted label pair.</p></li>
+<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Human readable labels for each classification ID.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title to put above the plot.  Defaults to None.</p></li>
+<li><p><strong>figsize</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Size of the figure to create. Defaults
+to (10.0, 5.0).</p></li>
+<li><p><strong>cmap</strong> (<em>Colormap</em><em>, </em><em>optional</em>) – Colormap to use for the Seaborn Heatmap. Defaults to
+plt.cm.Blues.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the confusion matrix is not square.</p></li>
+<li><p><strong>ValueError</strong> – If the number of labels doesn’t match the confusion matrix shape.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Figure that the results were plotted onto (e.g. for saving plot)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rfml.nbutils.plot.plot_convergence">
+<code class="sig-prename descclassname">rfml.nbutils.plot.</code><code class="sig-name descname">plot_convergence</code><span class="sig-paren">(</span><em class="sig-param">train_loss: Iterable[float], val_loss: Iterable[float], title: str = None, figsize: Tuple[float, float] = (10.0, 5.0), annotate: bool = True</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/rfml/nbutils/plot.html#plot_convergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nbutils.plot.plot_convergence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the convergence of the training/validation loss vs epochs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_loss</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Average training loss for each epoch during
+training.</p></li>
+<li><p><strong>val_loss</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Average validation loss for each epoch during
+training.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title to put above the plot.  Defaults to None.</p></li>
+<li><p><strong>figsize</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Size of the figure to create. Defaults
+to (10.0, 5.0).</p></li>
+<li><p><strong>annotate</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, this function will draw lines on the Figure
+to mark the best validation loss achieved. Defaults
+to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If train_loss and val_loss are not the same length</p></li>
+<li><p><strong>ValueError</strong> – If train_loss and val_loss don’t have any data (length is 0)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Figure that the convergence was plotted onto (e.g. for saving plot)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="nn.html" class="btn btn-neutral float-right" title="Neural Networks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="data.html" class="btn btn-neutral float-left" title="Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
