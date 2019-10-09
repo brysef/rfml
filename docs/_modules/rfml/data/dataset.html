@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rfml.data.dataset &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html"> Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nbutils.html"> Notebook Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nn.html"> Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ptradio.html"> PyTorch Radio</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>rfml.data.dataset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for rfml.data.dataset</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Wrap a premade dataset inside a Pandas DataFrame.</span>
+
+<span class="sd">Provide a wrapper around a Pandas DataFrame for a premade dataset that splits</span>
+<span class="sd">the classes and other distinguishing factors evenly for training, testing, and</span>
+<span class="sd">validation sets.  Additionally, this module facilitates data loading from file</span>
+<span class="sd">and transformation into the format needed by Keras and PyTorch.</span>
+
+<span class="sd">By using Pandas masking functionality, this module can be used to subselect</span>
+<span class="sd">parts of a dataset (e.g. only trained with no frequency offset, a subset of</span>
+<span class="sd">modulatons, etc.)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Bryse Flowers &lt;brysef@vt.edu&gt;&quot;</span>
+
+<span class="c1"># External Includes</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># Internal Includes</span>
+<span class="kn">from</span> <span class="nn">.encoder</span> <span class="k">import</span> <span class="n">Encoder</span>
+
+
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../data.html#rfml.data.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provide a wrapper around a Pandas DataFrame containing a dataset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pd.DataFrame): Pandas DataFrame that represents the dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">HDF_KEY</span> <span class="o">=</span> <span class="s2">&quot;Dataset&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">df</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Directly return the underlying Pandas DataFrame containing the data.</span>
+
+<span class="sd">        This can then be used for mask creation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: Pandas DataFrame that represents the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Not providing a &quot;copy&quot; because datasets could be multiple GB and</span>
+        <span class="c1"># therefore this could become memory prohibitive.  However, allowing</span>
+        <span class="c1"># access to the internal data structure is also bad defensive</span>
+        <span class="c1"># programming because a caller could manipulate the underlying data and</span>
+        <span class="c1"># cause a crash -- For now, assume that the caller is not malicious in</span>
+        <span class="c1"># order to conserve memory.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of the columns that are represented in the underlying Dataframe</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str]: Column names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compare this Dataset with another to see if they are equivalent</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            This operation is very computationally expensive so ensure that you</span>
+<span class="sd">            do not try to compare datasets often (such as only restricting this</span>
+<span class="sd">            to unit tests)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Dataframe equality operator doesn&#39;t work because of the nested series</span>
+        <span class="c1"># therefore, it is easiest to just loop over all of the columns and</span>
+        <span class="c1"># ensure that all elements of each match.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># This comparison throws a Value error when there is a mismatch in how</span>
+        <span class="c1"># it is labeled: &quot;Can only compare identically-labeled Series objects&quot;</span>
+        <span class="c1"># When this happens, it means they aren&#39;t equivalent anyways for our</span>
+        <span class="c1"># purposes (because they clearly aren&#39;t **exactly** equal) and so there</span>
+        <span class="c1"># is no need to sort the series or drop indexes to get around the error</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="c1"># IQ is stored as a series/array and therefore they require a</span>
+                <span class="c1"># special floating point comparison (which is very expensive)</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">other</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">):</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Concatenate two Datasets together</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            If either Dataset contains a column that the other does not, this</span>
+<span class="sd">            function will silently drop that column from the returned Dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">cols2</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="n">to_drop</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">cols1</span><span class="p">)</span><span class="o">.</span><span class="n">symmetric_difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">cols2</span><span class="p">))</span>
+        <span class="n">df1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">to_drop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">df2</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">to_drop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+        <span class="n">combined</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Dataset.split"><a class="viewcode-back" href="../../../data.html#rfml.data.dataset.Dataset.split">[docs]</a>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">frac</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">on</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Split this Dataset into two based on fractional availability.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frac (float, optional): Percentage of the Dataset to put into the</span>
+<span class="sd">                second set. Defaults to 0.3.</span>
+<span class="sd">            on (Tuple[str], optional): Collection of column names, with</span>
+<span class="sd">                categorical values, to evenly split amongst the two Datasets.</span>
+<span class="sd">                If provided, each categorical value will have an equal</span>
+<span class="sd">                percentage representation in the returned Dataset. Defaults to</span>
+<span class="sd">                None.</span>
+<span class="sd">            mask (pd.DataFrame.mask, optional): Mask to apply before performing</span>
+<span class="sd">                the split. Defaults to None.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If *frac* is not between (0, 1)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[Dataset, Dataset]: Two Datasets (such as train/validate)</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            Not providing anything for the *on* parameter may lead to incorrect</span>
+<span class="sd">            behavior.  For instance, you may have a class imbalance in the</span>
+<span class="sd">            datasets.  This may be desired in some cases, but, its likely one</span>
+<span class="sd">            would want to explicitly specify this and not rely on randomness.</span>
+
+<span class="sd">        .. seealso:: Dataset.subsample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">frac</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">frac</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;frac must be between (0, 1), not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frac</span><span class="p">))</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+
+        <span class="c1"># Mask out data if necessary</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="c1"># Shuffle the dataset</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">on</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">on</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># No need to preserve any notion of &quot;evenness&quot; so can directly split</span>
+            <span class="c1"># the DataFrame here</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">*</span> <span class="n">frac</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">df1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">df1</span><span class="p">),</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span>
+
+        <span class="c1"># Use a private function for the ability to use recursion</span>
+        <span class="k">def</span> <span class="nf">_splitDF</span><span class="p">(</span><span class="n">subDF</span><span class="p">,</span> <span class="n">frac</span><span class="p">,</span> <span class="n">on</span><span class="p">):</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">on</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">on</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">on</span> <span class="o">=</span> <span class="n">on</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">on</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">ret0List</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">ret1List</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">subDF</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+                <span class="n">_subDF</span> <span class="o">=</span> <span class="n">subDF</span><span class="p">[</span><span class="n">subDF</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">on</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_subDF</span><span class="p">)</span> <span class="o">*</span> <span class="n">frac</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">ret0</span> <span class="o">=</span> <span class="n">_subDF</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
+                    <span class="n">ret1</span> <span class="o">=</span> <span class="n">_subDF</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ret0</span><span class="p">,</span> <span class="n">ret1</span> <span class="o">=</span> <span class="n">_splitDF</span><span class="p">(</span><span class="n">_subDF</span><span class="p">,</span> <span class="n">frac</span><span class="p">,</span> <span class="n">on</span><span class="p">)</span>
+
+                <span class="n">ret0List</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret0</span><span class="p">)</span>
+                <span class="n">ret1List</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ret0List</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ret1List</span><span class="p">)</span>
+
+        <span class="n">df1</span><span class="p">,</span> <span class="n">df2</span> <span class="o">=</span> <span class="n">_splitDF</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">frac</span><span class="p">,</span> <span class="n">on</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">df1</span><span class="p">),</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.as_numpy"><a class="viewcode-back" href="../../../data.html#rfml.data.dataset.Dataset.as_numpy">[docs]</a>    <span class="k">def</span> <span class="nf">as_numpy</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">le</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Encode the Dataset as a machine learning &lt;X, Y&gt; pair in NumPy format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            le (Encoder): Label encoder used to translate the label column into</span>
+<span class="sd">                a format the neural network will understand (such as an index).  The</span>
+<span class="sd">                label column is embedded within this class.</span>
+<span class="sd">            mask (pd.DataFrame.mask, optional): Mask to apply before creating</span>
+<span class="sd">                the Machine Learning pairs. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[np.ndarray, np.ndarray]: x, y</span>
+
+<span class="sd">        The X matrix is returned in the format (batch, channel, iq, time).</span>
+<span class="sd">        The Y matrix is returned in the format (batch).</span>
+
+<span class="sd">        Batch corresponds to the number of examples in the dataset, channel is</span>
+<span class="sd">        always 1, IQ is always 2, and time is variable length depending on how</span>
+<span class="sd">        the underlying data has been sliced.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            Numpy is the format used by Keras.  Other machine learning</span>
+<span class="sd">            frameworks (such as PyTorch) require a separate method for getting</span>
+<span class="sd">            the data ready.</span>
+
+<span class="sd">        .. seealso:: rfml.data.Encoder,</span>
+<span class="sd">                     rfml.data.Dataset.as_torch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+
+        <span class="c1"># Mask out data if necessary</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="c1"># Add in the channel dimension</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">le</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">le</span><span class="o">.</span><span class="n">label_name</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="Dataset.as_torch"><a class="viewcode-back" href="../../../data.html#rfml.data.dataset.Dataset.as_torch">[docs]</a>    <span class="k">def</span> <span class="nf">as_torch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">le</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TensorDataset</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Encode the Dataset as machine learning &lt;X, Y&gt; pairs in PyTorch</span>
+<span class="sd">        format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            le (Encoder): Label encoder used to translate the label column into</span>
+<span class="sd">                a format the neural network will understand (such as an index).  The</span>
+<span class="sd">                label column is embedded within this class.</span>
+<span class="sd">            mask (pd.DataFrame.mask, optional): Mask to apply before creating</span>
+<span class="sd">                the Machine Learning pairs. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TensorDataset: Dataset to be used in training or testing loops.</span>
+
+<span class="sd">        The X matrix is returned in the format (batch, channel, iq, time).</span>
+<span class="sd">        The Y matrix is returned in the format (batch).</span>
+
+<span class="sd">        Batch corresponds to the number of examples in the dataset, channel is</span>
+<span class="sd">        always 1, IQ is always 2, and time is variable length depending on how</span>
+<span class="sd">        the underlying data has been sliced.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            TensorDataset is the format used by PyTorch and allows for iteration</span>
+<span class="sd">            in batches.  For other machine learning frameworks, such as Keras,</span>
+<span class="sd">            ensure you call the correct method.</span>
+
+<span class="sd">        .. seealso:: rfml.data.Encoder,</span>
+<span class="sd">                     rfml.data.Dataset.as_numpy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">(</span><span class="n">le</span><span class="o">=</span><span class="n">le</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+
+        <span class="c1"># Ensure that the labels look like an array</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Convert to the correct data types for PyTorch</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int64&quot;</span><span class="p">)</span>
+
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">dataset</span></div>
+
+<div class="viewcode-block" id="Dataset.get_examples_per_class"><a class="viewcode-back" href="../../../data.html#rfml.data.dataset.Dataset.get_examples_per_class">[docs]</a>    <span class="k">def</span> <span class="nf">get_examples_per_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Modulation&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Count the number of examples per class in this Dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            label (str, optional): Column that is used as the class label.</span>
+<span class="sd">                Defaults to &quot;Modulation&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, int]: Count of examples (value) per label (key).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">counts</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Dataset.is_balanced"><a class="viewcode-back" href="../../../data.html#rfml.data.dataset.Dataset.is_balanced">[docs]</a>    <span class="k">def</span> <span class="nf">is_balanced</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Modulation&quot;</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check if the data contained in this dataset is evenly represented by</span>
+<span class="sd">        a categorical label.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            label (str, optional): The column of the data to verify is balanced.</span>
+<span class="sd">                Defaults to &quot;Modulation&quot;.</span>
+<span class="sd">            margin (int, optional): Difference between the expected balance and</span>
+<span class="sd">                the true balance before this check would fail.  This can be</span>
+<span class="sd">                useful for checking for a &quot;fuzzy balance&quot; that would occur if</span>
+<span class="sd">                the Dataset was previously split and therefore the length of the</span>
+<span class="sd">                Dataset is no longer divisible by the number of categorical</span>
+<span class="sd">                labels. Defaults to 0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the Dataset is balanced, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">epc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_examples_per_class</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">epc</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">c</span> <span class="o">-</span> <span class="n">n</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">epc</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">margin</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

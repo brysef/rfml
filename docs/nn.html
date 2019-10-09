@@ -1,0 +1,1078 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Neural Networks &mdash; RFML w/ PyTorch Software Documentation 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PyTorch Radio" href="ptradio.html" />
+    <link rel="prev" title="Notebook Utilities" href="nbutils.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RFML w/ PyTorch Software Documentation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data.html"> Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbutils.html"> Notebook Utilities</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Neural Networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#evaluate">Evaluate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.eval.accuracy">Accuracy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.eval.confusion">Confusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functional">Functional</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.F.energy">Energy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.F.evm">Error Vector Magnitude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.F.psd">Power Spectral Density</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#layers">Layers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.layers.flatten">Flatten</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.layers.power_normalization">Power Normalization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#models">Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.model.base">Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.model.cldnn">CLDNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.model.cnn">CNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.model.factory">Factory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#train">Train</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.train.printing_training_listener">Printing Training Listener</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.train.standard">Standard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rfml.nn.train.training_listener">Training Listener</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ptradio.html"> PyTorch Radio</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RFML w/ PyTorch Software Documentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Neural Networks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/nn.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="neural-networks">
+<h1>Neural Networks<a class="headerlink" href="#neural-networks" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="evaluate">
+<h2>Evaluate<a class="headerlink" href="#evaluate" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-rfml.nn.eval.accuracy">
+<span id="accuracy"></span><h3>Accuracy<a class="headerlink" href="#module-rfml.nn.eval.accuracy" title="Permalink to this headline">¶</a></h3>
+<p>Helper function for computing the (top-k) accuracy of a model on a dataset.</p>
+<dl class="function">
+<dt id="rfml.nn.eval.accuracy.compute_accuracy">
+<code class="sig-prename descclassname">rfml.nn.eval.accuracy.</code><code class="sig-name descname">compute_accuracy</code><span class="sig-paren">(</span><em class="sig-param">model: rfml.nn.model.base.Model</em>, <em class="sig-param">data: rfml.data.dataset.Dataset</em>, <em class="sig-param">le: rfml.data.encoder.Encoder</em>, <em class="sig-param">batch_size: int = 512</em>, <em class="sig-param">mask: pandas.core.generic.NDFrame.mask = None</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/rfml/nn/eval/accuracy.html#compute_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.eval.accuracy.compute_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Top-1 accuracy of this model on the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="#rfml.nn.model.base.Model" title="rfml.nn.model.base.Model"><em>Model</em></a>) – (Trained) model to evaluate.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="data.html#rfml.data.dataset.Dataset" title="rfml.data.dataset.Dataset"><em>Dataset</em></a>) – (Testing) data to use for evaluation.</p></li>
+<li><p><strong>le</strong> (<a class="reference internal" href="data.html#rfml.data.encoder.Encoder" title="rfml.data.encoder.Encoder"><em>Encoder</em></a>) – Mapping from human readable to machine readable.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Defaults to 512.</p></li>
+<li><p><strong>mask</strong> (<em>pd.DataFrame.mask</em><em>, </em><em>optional</em>) – Mask to apply to the data before computing
+accuracy.  Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Top-1 Accuracy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rfml.nn.eval.accuracy.compute_accuracy_on_cross_sections">
+<code class="sig-prename descclassname">rfml.nn.eval.accuracy.</code><code class="sig-name descname">compute_accuracy_on_cross_sections</code><span class="sig-paren">(</span><em class="sig-param">model: rfml.nn.model.base.Model</em>, <em class="sig-param">data: rfml.data.dataset.Dataset</em>, <em class="sig-param">le: rfml.data.encoder.Encoder</em>, <em class="sig-param">column: str</em>, <em class="sig-param">batch_size: int = 512</em><span class="sig-paren">)</span> &#x2192; Tuple[List[float], List]<a class="reference internal" href="_modules/rfml/nn/eval/accuracy.html#compute_accuracy_on_cross_sections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.eval.accuracy.compute_accuracy_on_cross_sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute an accuracy on each unique value in the column (such as SNR or CFO)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="#rfml.nn.model.base.Model" title="rfml.nn.model.base.Model"><em>Model</em></a>) – (Trained) model to evaluate.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="data.html#rfml.data.dataset.Dataset" title="rfml.data.dataset.Dataset"><em>Dataset</em></a>) – (Testing) data to use for evaluation.</p></li>
+<li><p><strong>le</strong> (<a class="reference internal" href="data.html#rfml.data.encoder.Encoder" title="rfml.data.encoder.Encoder"><em>Encoder</em></a>) – Mapping from human readable to machine readable.</p></li>
+<li><p><strong>column</strong> (<em>str</em>) – Name of the column to use for computing cross sections (e.g. SNR)</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Defaults to 512.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Accuracy vs Column, Column Values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[float], List[object]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rfml.nn.eval.accuracy.compute_topk_accuracy">
+<code class="sig-prename descclassname">rfml.nn.eval.accuracy.</code><code class="sig-name descname">compute_topk_accuracy</code><span class="sig-paren">(</span><em class="sig-param">model: rfml.nn.model.base.Model</em>, <em class="sig-param">data: rfml.data.dataset.Dataset</em>, <em class="sig-param">le: rfml.data.encoder.Encoder</em>, <em class="sig-param">k: int</em>, <em class="sig-param">batch_size: int = 512</em>, <em class="sig-param">mask: pandas.core.generic.NDFrame.mask = None</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/rfml/nn/eval/accuracy.html#compute_topk_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.eval.accuracy.compute_topk_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the probability that the true class is in the top k outputs of the network.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you only want Top-1 Accuracy (if you don’t know what this is, then that is what
+you want).  Then you should just use compute_accuracy instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="#rfml.nn.model.base.Model" title="rfml.nn.model.base.Model"><em>Model</em></a>) – (Trained) model to evaluate.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="data.html#rfml.data.dataset.Dataset" title="rfml.data.dataset.Dataset"><em>Dataset</em></a>) – (Testing) data to use for evaluation.</p></li>
+<li><p><strong>le</strong> (<a class="reference internal" href="data.html#rfml.data.encoder.Encoder" title="rfml.data.encoder.Encoder"><em>Encoder</em></a>) – Mapping from human readable to machine readable.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Value to use when determining the “top k”.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Defaults to 512.</p></li>
+<li><p><strong>mask</strong> (<em>pd.DataFrame.mask</em><em>, </em><em>optional</em>) – Mask to apply to the data before computing
+top-k accuracy.  Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Top-K Accuracy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.eval.confusion">
+<span id="confusion"></span><h3>Confusion<a class="headerlink" href="#module-rfml.nn.eval.confusion" title="Permalink to this headline">¶</a></h3>
+<p>Helper function for computing the confusion matrix of a model on a dataset.</p>
+<dl class="function">
+<dt id="rfml.nn.eval.confusion.compute_confusion">
+<code class="sig-prename descclassname">rfml.nn.eval.confusion.</code><code class="sig-name descname">compute_confusion</code><span class="sig-paren">(</span><em class="sig-param">model: rfml.nn.model.base.Model</em>, <em class="sig-param">data: rfml.data.dataset.Dataset</em>, <em class="sig-param">le: rfml.data.encoder.Encoder</em>, <em class="sig-param">batch_size: int = 512</em>, <em class="sig-param">mask: pandas.core.generic.NDFrame.mask = None</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/rfml/nn/eval/confusion.html#compute_confusion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.eval.confusion.compute_confusion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and normalize a confusion matrix of this model on the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="#rfml.nn.model.base.Model" title="rfml.nn.model.base.Model"><em>Model</em></a>) – (Trained) model to evaluate.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="data.html#rfml.data.dataset.Dataset" title="rfml.data.dataset.Dataset"><em>Dataset</em></a>) – (Testing) data to use for evaluation.</p></li>
+<li><p><strong>le</strong> (<a class="reference internal" href="data.html#rfml.data.encoder.Encoder" title="rfml.data.encoder.Encoder"><em>Encoder</em></a>) – Mapping from human readable to machine readable.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Defaults to 512.</p></li>
+<li><p><strong>mask</strong> (<em>pd.DataFrame.mask</em><em>, </em><em>optional</em>) – Mask to apply to the data before computing
+accuracy.  Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Normalized Confusion Matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="functional">
+<h2>Functional<a class="headerlink" href="#functional" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-rfml.nn.F.energy">
+<span id="energy"></span><h3>Energy<a class="headerlink" href="#module-rfml.nn.F.energy" title="Permalink to this headline">¶</a></h3>
+<p>Calculate the average energy (per symbol if provided) for each example.</p>
+<dl class="function">
+<dt id="rfml.nn.F.energy.energy">
+<code class="sig-prename descclassname">rfml.nn.F.energy.</code><code class="sig-name descname">energy</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">sps: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/F/energy.html#energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.F.energy.energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average energy (per symbol if provided) for each example.</p>
+<p>This function assumes that the signal is structured as:</p>
+<div class="math notranslate nohighlight">
+\[Batch x Channel x IQ x Time.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – Input Tensor (BxCxIQxT)</p></li>
+<li><p><strong>sps</strong> (<em>int</em><em>, </em><em>optional</em>) – Samples per symbol, essentially the power is multiplied by
+this value in order to calculate average energy per symbol.
+Defaults to 1.0.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\mathbb{E}[E_{s}] = \frac{\text{sps}}{N} \sum_{i=0}^{N} |s_i|^2\\|s_i| = \sqrt{\mathbb{R}^2 + \mathbb{C}^2}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Average energy per example per channel (BxC)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.F.evm">
+<span id="error-vector-magnitude"></span><h3>Error Vector Magnitude<a class="headerlink" href="#module-rfml.nn.F.evm" title="Permalink to this headline">¶</a></h3>
+<p>PyTorch implementation of Error Vector Magnitude</p>
+<dl class="function">
+<dt id="rfml.nn.F.evm.evm">
+<code class="sig-prename descclassname">rfml.nn.F.evm.</code><code class="sig-name descname">evm</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">y: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/nn/F/evm.html#evm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.F.evm.evm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Error Vector Magnitude (EVM) between two signals.</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{EVM}(s_{rx}, s_{tx}) = \sqrt{\mathbb{R}(s_{rx} - s_{tx})^2 + \mathbb{C}(s_{rx} - s_{tx})^2}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – First signal (BxCxIQxN)</p></li>
+<li><p><strong>y</strong> (<em>torch.Tensor</em>) – Second signal (BxCxIQxN)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Error Vector Magnitude per sample (BxCx1xN).  Note that the</dt><dd><p>returned signal is no longer <em>complex</em> as it is only a
+magnitude and therefore only has a dimension size of 1 where IQ
+used to be.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.F.psd">
+<span id="power-spectral-density"></span><h3>Power Spectral Density<a class="headerlink" href="#module-rfml.nn.F.psd" title="Permalink to this headline">¶</a></h3>
+<p>Calculate the power spectral density (PSD) of an input signal.</p>
+</div>
+</div>
+<div class="section" id="layers">
+<h2>Layers<a class="headerlink" href="#layers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-rfml.nn.layers.flatten">
+<span id="flatten"></span><h3>Flatten<a class="headerlink" href="#module-rfml.nn.layers.flatten" title="Permalink to this headline">¶</a></h3>
+<p>Flatten signals/images into features.</p>
+<dl class="class">
+<dt id="rfml.nn.layers.flatten.Flatten">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.layers.flatten.</code><code class="sig-name descname">Flatten</code><span class="sig-paren">(</span><em class="sig-param">preserve_time: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/layers/flatten.html#Flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.layers.flatten.Flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flatten the channel, IQ, and time dims into a single feature dim.</p>
+<p>This module assumes that the input signal is structured as:</p>
+<div class="math notranslate nohighlight">
+\[Batch x Channel x IQ x Time\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>preserve_time</strong> (<em>bool</em><em>, </em><em>optional</em>) – If provided as True then the time dimension is
+preserved in the outputs and only the IQ and
+Channel dimensions are concatenated together.
+Otherwise, the time dimension is also collapsed
+to form a single feature dimension.  Generally,
+you will set this to False if the layer after
+Flatten will be a Linear layer and set this to
+True if the layer after Flatten will be a
+Recurrent layer that utilizes the time
+dimension.  Defaults to False.</p>
+</dd>
+</dl>
+<p>The outputs of this layer, if <em>preserve_time</em> is not set to True, are:</p>
+<div class="math notranslate nohighlight">
+\[Batch x Features\]</div>
+<p>Where features is the product of the flattened dimensions:</p>
+<div class="math notranslate nohighlight">
+\[(Channel x IQ x Time)\]</div>
+<p>The outputs of this layer, if <em>preserve_time</em> is set to True, are:</p>
+<div class="math notranslate nohighlight">
+\[Batch x Time x Features\]</div>
+<p>Where features is the product of the flattened dimensions:</p>
+<div class="math notranslate nohighlight">
+\[(Channel x IQ)\]</div>
+<dl class="method">
+<dt id="rfml.nn.layers.flatten.Flatten.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/layers/flatten.html#Flatten.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.layers.flatten.Flatten.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.layers.power_normalization">
+<span id="power-normalization"></span><h3>Power Normalization<a class="headerlink" href="#module-rfml.nn.layers.power_normalization" title="Permalink to this headline">¶</a></h3>
+<p>Normalize the power across each example/channel to 1.</p>
+<dl class="class">
+<dt id="rfml.nn.layers.power_normalization.PowerNormalization">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.layers.power_normalization.</code><code class="sig-name descname">PowerNormalization</code><a class="reference internal" href="_modules/rfml/nn/layers/power_normalization.html#PowerNormalization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.layers.power_normalization.PowerNormalization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform average energy per sample (power) normalization.</p>
+<p>Power Normalization would be performed as follows for each batch/channel:</p>
+<div class="math notranslate nohighlight">
+\[x = \frac{x}{\sqrt{\mathbb{E}[x]}}\]</div>
+<p>This module assumes that the signal is structured as:</p>
+<div class="math notranslate nohighlight">
+\[Batch x Channel x IQ x Time.\]</div>
+<p>Where the power normalization is performed along the T axis using the power
+measured in the complex valued I/Q dimension.</p>
+<p>The outputs of this layer match the inputs:</p>
+<div class="math notranslate nohighlight">
+\[Batch x Channel x IQ x Time\]</div>
+<dl class="method">
+<dt id="rfml.nn.layers.power_normalization.PowerNormalization.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/layers/power_normalization.html#PowerNormalization.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.layers.power_normalization.PowerNormalization.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="models">
+<h2>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-rfml.nn.model.base">
+<span id="base"></span><h3>Base<a class="headerlink" href="#module-rfml.nn.model.base" title="Permalink to this headline">¶</a></h3>
+<p>Base class for all neural network models</p>
+<dl class="class">
+<dt id="rfml.nn.model.base.Model">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.model.base.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">input_samples: int</em>, <em class="sig-param">n_classes: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/base.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.base.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class that all neural network models inherit from.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_samples</strong> (<em>int</em>) – The number of samples that will be given to this
+Model for each inference.</p></li>
+<li><p><strong>n_classes</strong> (<em>int</em>) – The number of classes that this Model will predict.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This model supports standard switching between training/evaluation through
+PyTorch (e.g. Model.train() and Model.eval()) but also supports a custom
+command to allow transfer learning by freezing only portions of the network
+(e.g. Model.freeze() and Model.unfreeze()).  Note that some subclasses of
+this may not necessarily support this feature.</p>
+<p>This class also provides all of the common functionality to the child
+classes such as save() and load().</p>
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.device">
+<em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#rfml.nn.model.base.Model.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the most probable device that this model is currently on.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method is not guaranteed to work if the model is split onto multiple
+devices (e.g. part on CPU, part on GPU 1, and part on GPU 2).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Device that this model is likely located on</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>torch.device</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.freeze">
+<code class="sig-name descname">freeze</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/base.html#Model.freeze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.base.Model.freeze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Freeze part of the model so that only parts of the model are updated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.input_samples">
+<em class="property">property </em><code class="sig-name descname">input_samples</code><a class="headerlink" href="#rfml.nn.model.base.Model.input_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The expected number of complex samples on the input to this model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">path: str = None</em>, <em class="sig-param">map_location: str = 'cpu'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/base.html#Model.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.base.Model.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load pretrained weights from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em><em>, </em><em>optional</em>) – If provided, then load immortal weights from
+this path.  If not set, then the temporary
+weights path is used (for reloading the
+“best weights” in an early stopping
+procedure). Defaults to None.</p></li>
+<li><p><strong>map_location</strong> (<em>str</em><em>, </em><em>optional</em>) – String representing the device to
+load the model/weights into. If this
+is set to None, then the weights will
+be loaded onto the same device they
+were saved from. This can cause
+failures if the devices do not exist
+on the machine calling this function.
+This can occur if the model is
+trained on one device (with GPUs) and
+then used on another device where
+GPUs do not exist.  It can also occur
+on the same device if the GPU
+configurations are changed (by
+setting CUDA_VISIBLE_DEVICES) or if
+the desired device is out of memory.
+See torch.load() documentation for
+further details and options as this
+parameter is simply a passthrough for
+that. Defaults to “cpu” if path is
+provided, else it is set to None and
+the input provided by the user is
+ignored.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This doesn’t provide safety against weights paths existing;
+therefore, it will throw the arguments back up the stack instead
+of silencing them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.n_classes">
+<em class="property">property </em><code class="sig-name descname">n_classes</code><a class="headerlink" href="#rfml.nn.model.base.Model.n_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of outputs of this model per inference.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.n_parameters">
+<em class="property">property </em><code class="sig-name descname">n_parameters</code><a class="headerlink" href="#rfml.nn.model.base.Model.n_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of parameters in the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.n_trainable_parameters">
+<em class="property">property </em><code class="sig-name descname">n_trainable_parameters</code><a class="headerlink" href="#rfml.nn.model.base.Model.n_trainable_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of parameters that would be ‘learned’ during training.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.outputs">
+<code class="sig-name descname">outputs</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/nn/model/base.html#Model.outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.base.Model.outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method for receiving the full outputs of the neural network.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should only be used during testing – training should operate
+directly on the forward/backward calls provided by PyTorch.</p>
+</div>
+<p>This method is opinionated in order to reduce complexity of receiving model
+outputs for the caller.  To that end, it does four things for the caller:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Puts the model in <em>eval</em> mode so that Batch Normalization/Dropout aren’t
+induced</p></li>
+<li><p>Pushes the data to whatever device this model is currently on (such as
+cuda:0/cuda:1/cpu/etc.) so the caller doesn’t have to know where the model
+resides</p></li>
+<li><p>Obtains the outputs of the network (using whichever device the model is
+currently on)</p></li>
+<li><p>Pulls the outputs back to CPU for further analysis by the caller</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – Inputs to the network.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Full outputs of this network for each input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/rfml/nn/model/base.html#Model.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.base.Model.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a categorical prediction using an argmax strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – Inputs to the network.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Label of the highest class for each input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>outputs</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/base.html#Model.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.base.Model.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the currently loaded/trained weights to disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em><em>, </em><em>optional</em>) – If provided, the weights will be saved at this
+path, which is useful for immortalizing the
+weights once training is completed.  If not
+provided, then the model will create a
+temporary file with a unique ID to store
+the current weights at, and delete that file
+when this object is deleted.  This can be
+useful for storing intermediate weights
+that will be used to reload “the best weights”
+for an early stopping procedure, without
+requiring the caller to care where they are
+stored at.  Defaults to None.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will overwrite the weights saved at this path (or the temporary
+weights).</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.model.base.Model.unfreeze">
+<code class="sig-name descname">unfreeze</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/base.html#Model.unfreeze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.base.Model.unfreeze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-enable learning of all parts of the model.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.model.cldnn">
+<span id="cldnn"></span><h3>CLDNN<a class="headerlink" href="#module-rfml.nn.model.cldnn" title="Permalink to this headline">¶</a></h3>
+<p>Convolutional long deep neural network (CNN + GRU + MLP)</p>
+<dl class="class">
+<dt id="rfml.nn.model.cldnn.CLDNN">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.model.cldnn.</code><code class="sig-name descname">CLDNN</code><span class="sig-paren">(</span><em class="sig-param">input_samples: int</em>, <em class="sig-param">n_classes: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/cldnn.html#CLDNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.cldnn.CLDNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convolutional Long Deep Neural Network (CNN + GRU + MLP)</p>
+<p>This network is based off of a network for modulation classification first
+introduced in West/O’Shea.</p>
+<p>The following modifications/interpretations were made by Bryse Flowers:</p>
+<ul>
+<li><p>Batch Normalization was added otherwise the model was not stable enough to train
+in many cases (its unclear whether this was included in West’s model)</p></li>
+<li><p>The filter sizes were changed to 7 and the padding was set to 3 (where as
+West’s paper said they used size 8 filters and did not mention padding)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>An odd sized filter is necessary to ensure that the intermediate
+signal/feature map lengths are the same size and thus can be concatenated
+back together</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><dl class="simple">
+<dt>A Gated Recurrent Unit (GRU) was used in place of a Long-Short Term Memory (LSTM).</dt><dd><ul class="simple">
+<li><p>These two submodules should behave nearly identically but GRU has one fewer
+equation</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Bias was not used in the first convolution in order to more closely mimic the
+implementation of the CNN.</p></li>
+<li><p>The hidden size of the GRU was set to be the number of classes it is trying to
+predict – it makes the most sense instead of trying to find an arbritrary best
+hidden size.</p></li>
+</ul>
+<dl class="simple">
+<dt>References</dt><dd><p>N. E. West and T. O’Shea, “Deep architectures for modulation recognition,” in
+IEEE International Symposium on Dynamic Spectrum Access Networks (DySPAN), pp.
+1–6, IEEE, 2017.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="rfml.nn.model.cldnn.CLDNN.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/cldnn.html#CLDNN.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.cldnn.CLDNN.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.model.cnn">
+<span id="cnn"></span><h3>CNN<a class="headerlink" href="#module-rfml.nn.model.cnn" title="Permalink to this headline">¶</a></h3>
+<p>Simplistic convolutional neural network.</p>
+<dl class="class">
+<dt id="rfml.nn.model.cnn.CNN">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.model.cnn.</code><code class="sig-name descname">CNN</code><span class="sig-paren">(</span><em class="sig-param">input_samples: int</em>, <em class="sig-param">n_classes: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/cnn.html#CNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.cnn.CNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convolutional Neural Network based on the “VT_CNN2” Architecture</p>
+<p>This network is based off of a network for modulation classification first
+introduced in O’Shea et al and later updated by West/Oshea and Hauser et al
+to have larger filter sizes.</p>
+<p>Modifying the first convolutional layer to not use a bias term is a
+modification made by Bryse Flowers due to the observation of vanishing
+gradients during training when ported to PyTorch (other authors used Keras).</p>
+<p>Including the PowerNormalization inside this network is a simplification
+made by Bryse Flowers so that utilization of DSP blocks in real time for
+data generation does not require knowledge of the normalization used during
+training as that is encapsulated in the network and not in a pre-processing
+stage that must be matched up.</p>
+<dl>
+<dt>References</dt><dd><p>T. J. O’Shea, J. Corgan, and T. C. Clancy, “Convolutional radio modulation
+recognition networks,” in International Conference on Engineering Applications
+of Neural Networks, pp. 213–226, Springer,2016.</p>
+<p>N. E. West and T. O’Shea, “Deep architectures for modulation recognition,” in
+IEEE International Symposium on Dynamic Spectrum Access Networks (DySPAN), pp.
+1–6, IEEE, 2017.</p>
+<p>S. C. Hauser, W. C. Headley, and A. J.  Michaels, “Signal detection effects on
+deep neural networks utilizing raw iq for modulation classification,” in
+Military Communications Conference, pp. 121–127, IEEE, 2017.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="rfml.nn.model.cnn.CNN.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/cnn.html#CNN.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.cnn.CNN.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.model.factory">
+<span id="factory"></span><h3>Factory<a class="headerlink" href="#module-rfml.nn.model.factory" title="Permalink to this headline">¶</a></h3>
+<p>Simplistic factory pattern for config defined swapping of architecture used.</p>
+<dl class="function">
+<dt id="rfml.nn.model.factory.build_model">
+<code class="sig-prename descclassname">rfml.nn.model.factory.</code><code class="sig-name descname">build_model</code><span class="sig-paren">(</span><em class="sig-param">model_name: str</em>, <em class="sig-param">input_samples: int</em>, <em class="sig-param">n_classes: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/model/factory.html#build_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.model.factory.build_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory method for dynamic creation of multiple neural architectures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_name</strong> (<em>str</em>) – <p>The name of the model to build.  Currently
+supported models are:</p>
+<blockquote>
+<div><ul>
+<li><p>”CNN”</p></li>
+<li><p>”CLDNN”</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>input_samples</strong> (<em>int</em>) – Number of complex input samples to the model.</p></li>
+<li><p><strong>n_classes</strong> (<em>int</em>) – Number of output classes the model should predict.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The built model described by the provided parameters</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#rfml.nn.model.base.Model" title="rfml.nn.model.base.Model">Model</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="train">
+<h2>Train<a class="headerlink" href="#train" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Base<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-rfml.nn.train.base"></span><p>Base class that all trainers inherit from (strategy pattern).</p>
+</div>
+<div class="section" id="id2">
+<h3>Factory<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-rfml.nn.train.factory"></span><p>Simplistic factory pattern for swapping of training strategies.</p>
+<dl class="function">
+<dt id="rfml.nn.train.factory.build_trainer">
+<code class="sig-prename descclassname">rfml.nn.train.factory.</code><code class="sig-name descname">build_trainer</code><span class="sig-paren">(</span><em class="sig-param">strategy: str</em>, <em class="sig-param">lr: float = 0.001</em>, <em class="sig-param">max_epochs: int = 50</em>, <em class="sig-param">patience: int = 5</em>, <em class="sig-param">batch_size: int = 512</em>, <em class="sig-param">gpu: bool = True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; rfml.nn.train.base.TrainingStrategy<a class="reference internal" href="_modules/rfml/nn/train/factory.html#build_trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.factory.build_trainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a training strategy from the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>strategy</strong> (<em>str</em>) – <p>Strategy to use when training the network, current
+options are:</p>
+<blockquote>
+<div><ul>
+<li><p>”standard”</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – Learning rate to be used by the optimizer.
+Defaults to 10e-4.</p></li>
+<li><p><strong>max_epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of epochs to train before
+stopping training to preserve computing
+resources (even if the network is still
+improving). Defaults to 50.</p></li>
+<li><p><strong>patience</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of epochs to continue to train
+for even if the network is not still
+improving before deciding that overfitting is
+occurring and stopping. Defaults to 5.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of examples to give to the model at
+one time.  If this value is set too high,
+then an out of memory error could occur.  If
+the value is set too low then training will
+take a longer time (and be more variable).
+Defaults to 512.</p></li>
+<li><p><strong>gpu</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag describing whether the GPU is used or the
+training is performed wholly on the CPU.
+Defaults to True.</p></li>
+<li><p><strong>**kwargs</strong> – The remainder of the keyword arguments are directly passed through to
+the constructor of the class being instantied.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span> <span class="o">=</span> <span class="n">build_trainer</span><span class="p">(</span><span class="s2">&quot;standard&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">encoder</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;/path/to/weights.pt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.train.printing_training_listener">
+<span id="printing-training-listener"></span><h3>Printing Training Listener<a class="headerlink" href="#module-rfml.nn.train.printing_training_listener" title="Permalink to this headline">¶</a></h3>
+<p>TrainingListener for quick prototypes that only log to stdout.</p>
+<dl class="class">
+<dt id="rfml.nn.train.printing_training_listener.PrintingTrainingListener">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.train.printing_training_listener.</code><code class="sig-name descname">PrintingTrainingListener</code><a class="reference internal" href="_modules/rfml/nn/train/printing_training_listener.html#PrintingTrainingListener"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.printing_training_listener.PrintingTrainingListener" title="Permalink to this definition">¶</a></dt>
+<dd><p>TrainingListener implementation for quick prototypes that only logs to stdout.</p>
+<dl class="method">
+<dt id="rfml.nn.train.printing_training_listener.PrintingTrainingListener.on_epoch_completed">
+<code class="sig-name descname">on_epoch_completed</code><span class="sig-paren">(</span><em class="sig-param">mean_loss: float</em>, <em class="sig-param">epoch: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/train/printing_training_listener.html#PrintingTrainingListener.on_epoch_completed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.printing_training_listener.PrintingTrainingListener.on_epoch_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after a full training epoch has been completed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean_loss</strong> (<em>float</em>) – The mean training loss during this epoch.</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – Epoch that was just trained.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.train.printing_training_listener.PrintingTrainingListener.on_training_completed">
+<code class="sig-name descname">on_training_completed</code><span class="sig-paren">(</span><em class="sig-param">best_loss: float</em>, <em class="sig-param">best_epoch: int</em>, <em class="sig-param">total_epochs: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/train/printing_training_listener.html#PrintingTrainingListener.on_training_completed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.printing_training_listener.PrintingTrainingListener.on_training_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a stopping condition has been reached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>best_loss</strong> (<em>float</em>) – The best loss that was achieved by the model.</p></li>
+<li><p><strong>best_epoch</strong> (<em>int</em>) – The epoch where that loss was achieved.  The
+weights for the model is reloaded from this epoch.</p></li>
+<li><p><strong>total_epochs</strong> (<em>int</em>) – The total number of epochs that this model
+trained for.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.train.printing_training_listener.PrintingTrainingListener.on_validation_completed">
+<code class="sig-name descname">on_validation_completed</code><span class="sig-paren">(</span><em class="sig-param">mean_loss: float</em>, <em class="sig-param">epoch: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/train/printing_training_listener.html#PrintingTrainingListener.on_validation_completed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.printing_training_listener.PrintingTrainingListener.on_validation_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after the validation loss has been computed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean_loss</strong> (<em>float</em>) – Mean training loss for this epoch.</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – Epoch that was just validated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.train.standard">
+<span id="standard"></span><h3>Standard<a class="headerlink" href="#module-rfml.nn.train.standard" title="Permalink to this headline">¶</a></h3>
+<p>An implementation of a typical multi-class classification training loop.</p>
+<dl class="class">
+<dt id="rfml.nn.train.standard.StandardTrainingStrategy">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.train.standard.</code><code class="sig-name descname">StandardTrainingStrategy</code><span class="sig-paren">(</span><em class="sig-param">lr: float = 0.001</em>, <em class="sig-param">max_epochs: int = 50</em>, <em class="sig-param">patience: int = 5</em>, <em class="sig-param">batch_size: int = 512</em>, <em class="sig-param">gpu: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/train/standard.html#StandardTrainingStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.standard.StandardTrainingStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A typical strategy that would be used to train a multi-class classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – Learning rate to be used by the optimizer.
+Defaults to 10e-4.</p></li>
+<li><p><strong>max_epochs</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of epochs to train before
+stopping training to preserve computing
+resources (even if the network is still
+improving). Defaults to 50.</p></li>
+<li><p><strong>patience</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of epochs to continue to train
+for even if the network is not still
+improving before deciding that overfitting is
+occurring and stopping. Defaults to 5.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of examples to give to the model at
+one time.  If this value is set too high,
+then an out of memory error could occur.  If
+the value is set too low then training will
+take a longer time (and be more variable).
+Defaults to 512.</p></li>
+<li><p><strong>gpu</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag describing whether the GPU is used or the
+training is performed wholly on the CPU.
+Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rfml.nn.train.training_listener">
+<span id="training-listener"></span><h3>Training Listener<a class="headerlink" href="#module-rfml.nn.train.training_listener" title="Permalink to this headline">¶</a></h3>
+<p>Interface to receive callbacks about training progress (observer patten).</p>
+<dl class="class">
+<dt id="rfml.nn.train.training_listener.TrainingListener">
+<em class="property">class </em><code class="sig-prename descclassname">rfml.nn.train.training_listener.</code><code class="sig-name descname">TrainingListener</code><a class="reference internal" href="_modules/rfml/nn/train/training_listener.html#TrainingListener"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.training_listener.TrainingListener" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interface for receiving callbacks during training with current progress.</p>
+<p>A user should inherit from this base class, override the corresponding
+callbacks that it intends to receive, and register this listener with a
+trainer in order to receive status updates during training.</p>
+<dl class="method">
+<dt id="rfml.nn.train.training_listener.TrainingListener.on_epoch_completed">
+<code class="sig-name descname">on_epoch_completed</code><span class="sig-paren">(</span><em class="sig-param">mean_loss: float</em>, <em class="sig-param">epoch: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/train/training_listener.html#TrainingListener.on_epoch_completed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.training_listener.TrainingListener.on_epoch_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after a full training epoch has been completed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean_loss</strong> (<em>float</em>) – The mean training loss during this epoch.</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – Epoch that was just trained.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.train.training_listener.TrainingListener.on_training_completed">
+<code class="sig-name descname">on_training_completed</code><span class="sig-paren">(</span><em class="sig-param">best_loss: float</em>, <em class="sig-param">best_epoch: int</em>, <em class="sig-param">total_epochs: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/train/training_listener.html#TrainingListener.on_training_completed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.training_listener.TrainingListener.on_training_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a stopping condition has been reached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>best_loss</strong> (<em>float</em>) – The best loss that was achieved by the model.</p></li>
+<li><p><strong>best_epoch</strong> (<em>int</em>) – The epoch where that loss was achieved.  The
+weights for the model is reloaded from this epoch.</p></li>
+<li><p><strong>total_epochs</strong> (<em>int</em>) – The total number of epochs that this model
+trained for.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rfml.nn.train.training_listener.TrainingListener.on_validation_completed">
+<code class="sig-name descname">on_validation_completed</code><span class="sig-paren">(</span><em class="sig-param">mean_loss: float</em>, <em class="sig-param">epoch: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rfml/nn/train/training_listener.html#TrainingListener.on_validation_completed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rfml.nn.train.training_listener.TrainingListener.on_validation_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after the validation loss has been computed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean_loss</strong> (<em>float</em>) – Mean training loss for this epoch.</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – Epoch that was just validated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ptradio.html" class="btn btn-neutral float-right" title="PyTorch Radio" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="nbutils.html" class="btn btn-neutral float-left" title="Notebook Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Bryse Flowers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
