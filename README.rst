@@ -554,7 +554,7 @@ From the root folder of the repository.
 Documentation
 #############
 The documentation is a relatively simplistic Sphinx API rendering hosted within the repository by GitHub pages.
-It can be accessed at `brysef.github.io/rfml <brysef.github.io/rfml>`_.
+It can be accessed at `brysef.github.io/rfml <https://www.brysef.github.io/rfml/>`_.
 
 Tutorial
 ########
