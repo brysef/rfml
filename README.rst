@@ -754,13 +754,18 @@ If your work specifically revolves around adversarial machine learning for wirel
             volume = {},
             year = {2019}
     }
-    @inproceedings{mine:Flowers2019b,
-        author = {Bryse Flowers and R. Michael Buehrer and William C. Headley},
-        booktitle = {Military Commun. Conf.},
-        publisher = {IEEE},
-        title = {Communications Aware Adversarial Residual Networks},
-        type = {Conference Proceedings},
-        year = {2019}
+    @inproceedings{Flowers2019b,
+            author = {B. {Flowers} and R. M. {Buehrer} and W. C. {Headley}},
+            booktitle = {MILCOM 2019 - 2019 IEEE Military Communications Conference (MILCOM)},
+            doi = {10.1109/MILCOM47813.2019.9020716},
+            issn = {2155-7578},
+            keywords = {Perturbation methods;Transmitters;Receivers;Machine learning;Bit error rate;Modulation;Neural networks},
+            month = {Nov},
+            number = {},
+            pages = {133-140},
+            title = {Communications Aware Adversarial Residual Networks for Over the Air Evasion Attacks},
+            volume = {},
+            year = {2019}
     }
 
 
