@@ -162,7 +162,7 @@ class Dataset(object):
         if on is None or len(on) == 0:
             # No need to preserve any notion of "evenness" so can directly split
             # the DataFrame here
-            idx = int(len(df) * frac) + 1
+            idx = int(len(df) * frac)
             df1 = df[idx:]
             df2 = df[:idx]
             return Dataset(df1), Dataset(df2)
@@ -182,7 +182,7 @@ class Dataset(object):
                 _subDF = subDF[subDF[col] == val].copy()
 
                 if on is None:
-                    idx = int(len(_subDF) * frac) + 1
+                    idx = int(len(_subDF) * frac)
                     ret0 = _subDF[idx:]
                     ret1 = _subDF[:idx]
                 else:
