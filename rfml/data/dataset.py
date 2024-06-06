@@ -32,8 +32,9 @@ class Dataset(object):
 
     HDF_KEY = "Dataset"
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame, metadata: Dict[str, set] = dict()):
         self._df = df
+        self.metadata = metadata
 
     @property
     def df(self) -> pd.DataFrame:
