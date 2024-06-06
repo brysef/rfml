@@ -153,5 +153,5 @@ class DatasetBuilder(object):
         Returns:
             Dataset: A compiled dataset consisting of the added examples.
         """
-        df = pd.DataFrame(self._rows, columns=self._keys)
+        df = pd.DataFrame(self._rows, columns=list(self._keys))
         return Dataset(df)
