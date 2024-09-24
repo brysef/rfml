@@ -6,6 +6,7 @@ __author__ = "Bryse Flowers <brysef@vt.edu>"
 import numpy as np
 import pandas as pd
 from typing import Dict, Set, Union
+from collections import defaultdict
 
 # Internal Includes
 from .dataset import Dataset
@@ -74,6 +75,7 @@ class DatasetBuilder(object):
         self._defaults = defaults
 
         self._rows = list()
+        self._metadata = defaultdict(set)
 
     def add(self, iq: np.ndarray, **kwargs) -> "DatasetBuilder":
         """Add a new example to the Dataset that is being built.
@@ -117,6 +119,9 @@ class DatasetBuilder(object):
             self._keys = self._keys.union(set(["I", "Q"]))
             self._keys = self._keys.union(set(self._defaults.keys()))
 
+        for key in kwargs:
+            self._metadata[key].add(kwargs[key])
+
         # Construct the actual row candidate
         row = dict()
 
@@ -153,5 +158,5 @@ class DatasetBuilder(object):
         Returns:
             Dataset: A compiled dataset consisting of the added examples.
         """
-        df = pd.DataFrame(self._rows, columns=self._keys)
-        return Dataset(df)
+        df = pd.DataFrame(self._rows, columns=list(self._keys))
+        return Dataset(df, metadata=self._metadata)
